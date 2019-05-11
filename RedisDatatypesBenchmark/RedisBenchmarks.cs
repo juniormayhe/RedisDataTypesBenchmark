@@ -48,77 +48,77 @@
         }
 
         #region option 1 Each redis key has a delimited text, sequences of {"REASON IDENTIFIER":["REMOVED ID","REMOVED ID", ...]}
-        //[Benchmark]
-        //public void O1_Set_Delimited()
-        //{
-        //    foreach (var item in this.ListForWriting)
-        //    {
-        //        string key = $"o1_delimited:{item.GetKey()}";
-        //        this.Cache.Set(key, item.RemovedEntitiesByReason);
-        //    }
-        //}
+        [Benchmark]
+        public void O1_Set_Delimited()
+        {
+            foreach (var item in this.ListForWriting)
+            {
+                string key = $"o1_delimited:{item.GetKey()}";
+                this.Cache.Set(key, item.RemovedEntitiesByReason);
+            }
+        }
 
-        //[Benchmark]
-        //public void O1_Get_Delimited()
-        //{
-        //    foreach (var item in this.ListForReading)
-        //    {
-        //        string key = $"o1_delimited:{item.GetKey()}";
-        //        IDictionary<string, IEnumerable<string>> result = this.Cache.Get<IDictionary<string, IEnumerable<string>>>(key);
-        //    }
-        //}
+        [Benchmark]
+        public void O1_Get_Delimited()
+        {
+            foreach (var item in this.ListForReading)
+            {
+                string key = $"o1_delimited:{item.GetKey()}";
+                IDictionary<string, IEnumerable<string>> result = this.Cache.Get<IDictionary<string, IEnumerable<string>>>(key);
+            }
+        }
 
         #endregion
 
         #region option 2 Each redis key has a json string representing object (current routing way) 
         //we serialize for cache the minimum required info IDictionary<string,IEnumerable<string>> removed entities by Reason
 
-        //[Benchmark]
-        //public void O2_Set_JsonString()
-        //{
-        //    foreach (var item in ListForWriting)
-        //    {
-        //        string key = $"o2_json{item.GetKey()}";
-        //        this.Cache.Set(key, JsonConvert.SerializeObject(item.RemovedEntitiesByReason));
-        //    }
-        //}
+        [Benchmark]
+        public void O2_Set_JsonString()
+        {
+            foreach (var item in ListForWriting)
+            {
+                string key = $"o2_json{item.GetKey()}";
+                this.Cache.Set(key, JsonConvert.SerializeObject(item.RemovedEntitiesByReason));
+            }
+        }
 
-        //[Benchmark]
-        //public void O2_Get_JsonString()
-        //{
-        //    foreach (var item in ListForReading)
-        //    {
-        //        string key = $"o2_json{item.GetKey()}";
-        //        string result = this.Cache.Get<string>(key);
-        //        result = System.Text.RegularExpressions.Regex.Unescape(result);
-        //        IDictionary<string, IEnumerable<string>> reasons = JsonConvert.DeserializeObject<IDictionary<string, IEnumerable<string>>>(result);
-        //    }
-        //}
+        [Benchmark]
+        public void O2_Get_JsonString()
+        {
+            foreach (var item in ListForReading)
+            {
+                string key = $"o2_json{item.GetKey()}";
+                string result = this.Cache.Get<string>(key);
+                result = System.Text.RegularExpressions.Regex.Unescape(result);
+                IDictionary<string, IEnumerable<string>> reasons = JsonConvert.DeserializeObject<IDictionary<string, IEnumerable<string>>>(result);
+            }
+        }
 
         #endregion
 
         #region option2 using jil json package
-        //[Benchmark]
-        //public void O2_Set_JilJsonString()
-        //{
-        //    foreach (var item in this.ListForWriting)
-        //    {
-        //        string key = $"o2_jiljson{item.GetKey()}";
-        //        this.Cache.Set(key, Jil.JSON.Serialize(item.RemovedEntitiesByReason));
-        //    }
-        //}
+        [Benchmark]
+        public void O2_Set_JilJsonString()
+        {
+            foreach (var item in this.ListForWriting)
+            {
+                string key = $"o2_jiljson{item.GetKey()}";
+                this.Cache.Set(key, Jil.JSON.Serialize(item.RemovedEntitiesByReason));
+            }
+        }
 
-        //[Benchmark]
-        //public void O2_Get_JilJsonString()
-        //{
-        //    foreach (var item in this.ListForReading)
-        //    {
-        //        string key = $"o2_jiljson{item.GetKey()}";
-        //        string result = this.Cache.Get<string>(key);
-        //        result = System.Text.RegularExpressions.Regex.Unescape(result);
-        //        IDictionary<string, IEnumerable<string>> reasons = Jil.JSON.Deserialize<IDictionary<string, IEnumerable<string>>>(result);
-        //    }
-        //}
+        [Benchmark]
+        public void O2_Get_JilJsonString()
+        {
+            foreach (var item in this.ListForReading)
+            {
+                string key = $"o2_jiljson{item.GetKey()}";
+                string result = this.Cache.Get<string>(key);
+                result = System.Text.RegularExpressions.Regex.Unescape(result);
+                IDictionary<string, IEnumerable<string>> reasons = Jil.JSON.Deserialize<IDictionary<string, IEnumerable<string>>>(result);
+            }
+        }
         #endregion
 
         #region option 3 
