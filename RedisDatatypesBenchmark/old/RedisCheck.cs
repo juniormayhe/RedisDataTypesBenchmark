@@ -25,9 +25,9 @@
 
                 var key = $"BM_RoutingService_HealthCheckTest_{id}";
 
-                this.cache.Set(key, id, TimeSpan.FromSeconds(5));
+                this.cache.JsonSet(key, id, TimeSpan.FromSeconds(5));
 
-                var savedInfo = this.cache.Get<Guid>(key);
+                var savedInfo = this.cache.GetJson<Guid>(key);
 
                 if (id != savedInfo)
                 {
@@ -36,7 +36,7 @@
 
                 this.cache.Remove(key);
 
-                savedInfo = this.cache.Get<Guid>(key);
+                savedInfo = this.cache.GetJson<Guid>(key);
 
                 if (savedInfo != default(Guid))
                 {
