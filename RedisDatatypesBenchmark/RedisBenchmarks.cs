@@ -97,7 +97,7 @@
 
         #endregion
 
-        #region option 2 Each redis key has a json string representing object (current routing way) 
+        #region option 2 Newtonsoft - Each redis key has a json string representing object (current routing way) 
         //we serialize for cache the minimum required info IDictionary<string,IEnumerable<string>> removed entities by Reason
 
         [Benchmark]
@@ -124,7 +124,7 @@
 
         #endregion
 
-        #region option2 using jil json package
+        #region option 2 Jil - Each redis key has a json string representing object (current routing way) 
         [Benchmark]
         public void O2_Set_JilJsonString()
         {
@@ -148,7 +148,7 @@
         }
         #endregion
 
-        #region option 3 
+        #region option 3 Each redis key has a hash with field-value pairs of strings
         //redis has no option to set expiration for hashes :-O
         //https://stackoverflow.com/questions/16545321/how-to-expire-the-hset-child-key-in-redis
 
@@ -187,39 +187,38 @@
 
         #endregion
 
-        #region option 4
-        //[Benchmark]
-        //public void O4_Set_Sets()
-        //{
-        //    foreach (var item in this.ListForWriting)
-        //    {
-        //        string key = $"o4_set{item.GetKey()}";
-        //        IDictionary<string, string> entries = new Dictionary<string, string>();
-        //        foreach (var removedEntityByReason in item.RemovedEntitiesByReason)
-        //        {
-        //            //add fields for Reason and RemovedEntityIds
-        //            entries.Add(removedEntityByReason.Key, string.Join(",", removedEntityByReason.Value));
-        //        }
-        //        this.Cache.HashSet(key, entries);
-        //    }
-        //}
+        #region option 4 Each redis key has a set of unique plain text strings
+        [Benchmark]
+        public void O4_Set_Sets()
+        {
+            foreach (var item in this.ListForWriting)
+            {
+                string key = $"o4_set{item.GetKey()}";
+                var values = new List<string>();
+                foreach (var kvp in item.RemovedEntitiesByReason)
+                {
+                    values.Add($"{kvp.Key}:{string.Join(",", kvp.Value)}");
+                }
+                this.Cache.SetAddAll(key, values);
+            }
+        }
 
-        //[Benchmark]
-        //public void O4_Get_Sets()
-        //{
-        //    foreach (var item in this.ListForReading)
-        //    {
-        //        string key = $"o4_set{item.GetKey()}";
-        //        // field and comma delimited entity ids
-        //        IDictionary<string, string> values = this.Cache.HashGet(key);
+        [Benchmark]
+        public void O4_Get_Sets()
+        {
+            foreach (var item in this.ListForReading)
+            {
+                string key = $"o4_set{item.GetKey()}";
 
-        //        var reasons = new Dictionary<string, IEnumerable<string>>();
-        //        foreach (var kvp in values)
-        //        {
-        //            reasons.Add(kvp.Key, kvp.Value.Split(','));
-        //        }
-        //    }
-        //}
+                IEnumerable<string> rows = this.Cache.SetGet(key);
+                var result = new Dictionary<string, IEnumerable<string>>();
+                foreach (string row in rows)
+                {
+                    string[] v = row.Split(":");
+                    result.Add(v[0], v[1].Split(","));
+                }
+            }
+        }
         #endregion
 
         #region private methods

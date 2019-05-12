@@ -33,5 +33,7 @@
         Task<IDictionary<string,string>> HashGetAsync(string key);
 
         void SetAddAll(string key, IEnumerable<string> values);
+        Task<IEnumerable<string>> SetGetAsync(string key);
+        IEnumerable<string> SetGet(string key);
     }
 }

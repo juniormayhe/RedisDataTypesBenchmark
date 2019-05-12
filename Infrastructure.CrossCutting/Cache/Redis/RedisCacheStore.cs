@@ -162,6 +162,39 @@
             }
         }
 
+        IEnumerable<string> ICacheStore.SetGet(string key)
+        {
+            IEnumerable<string> result = null;
+            try
+            {
+                result = this.database.SetMembers(key, CommandFlags.PreferSlave)
+                    .Select(x=> x.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(key);
+            }
+
+            return result;
+        }
+
+        async Task<IEnumerable<string>> ICacheStore.SetGetAsync(string key)
+        {
+            IEnumerable<string> result = null;
+            try
+            {
+                var t = await this.database.SetMembersAsync(key, CommandFlags.PreferSlave)
+                    .ConfigureAwait(false);
+                result = t.Select(x => x.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(key);
+            }
+
+            return result;
+        }
+
         string ICacheStore.StringGet(string key)
         {
             string result = null;
