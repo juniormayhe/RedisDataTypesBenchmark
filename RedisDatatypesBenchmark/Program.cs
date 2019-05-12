@@ -3,9 +3,8 @@
     using BenchmarkDotNet.Running;
 
     using Infrastructure.CrossCutting.Cache;
-    using Newtonsoft.Json;
+
     using System;
-    using System.Collections.Generic;
 
     public class Program
     {
@@ -21,5 +20,6 @@
 
             Console.ReadLine();
         }
+
     }
 }

@@ -22,7 +22,7 @@
             this.readFlag = redisSettings.PreferSlaveForRead ? CommandFlags.PreferSlave : CommandFlags.PreferMaster;
         }
 
-        async Task<T> ICacheStore.GetAsync<T>(string key)
+        async Task<T> ICacheStore.GetJsonAsync<T>(string key)
         {
             try
             {
@@ -41,7 +41,7 @@
             return default(T);
         }
 
-        async Task ICacheStore.SetAsync<T>(string key, T value, TimeSpan? expiry = default(TimeSpan?))
+        async Task ICacheStore.SetJsonAsync<T>(string key, T value, TimeSpan? expiry = default(TimeSpan?))
         {
             try
             {
@@ -65,7 +65,7 @@
             }
         }
 
-        T ICacheStore.Get<T>(string key)
+        T ICacheStore.GetJson<T>(string key)
         {
             try
             {
@@ -83,7 +83,7 @@
             return default(T);
         }
 
-        void ICacheStore.Set<T>(string key, T value, TimeSpan? expiry = default(TimeSpan?))
+        void ICacheStore.JsonSet<T>(string key, T value, TimeSpan? expiry = default(TimeSpan?))
         {
             try
             {
@@ -136,7 +136,7 @@
         async Task<IDictionary<string, string>> ICacheStore.HashGetAsync(string key)
         {
             IDictionary<string, string> values = null;
-            
+
             try
             {
                 HashEntry[] entries = await this.database.HashGetAllAsync(key).ConfigureAwait(false);
@@ -148,6 +148,105 @@
             return values;
         }
 
-        
+        void ICacheStore.SetAddAll(string key, IEnumerable<string> values)
+        {
+            try
+            {
+                foreach (var value in values)
+                {
+                    this.database.SetAdd(key, (RedisValue)value, CommandFlags.FireAndForget);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        IEnumerable<string> ICacheStore.SetGet(string key)
+        {
+            IEnumerable<string> result = null;
+            try
+            {
+                result = this.database.SetMembers(key, CommandFlags.PreferSlave)
+                    .Select(x=> x.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(key);
+            }
+
+            return result;
+        }
+
+        async Task<IEnumerable<string>> ICacheStore.SetGetAsync(string key)
+        {
+            IEnumerable<string> result = null;
+            try
+            {
+                var t = await this.database.SetMembersAsync(key, CommandFlags.PreferSlave)
+                    .ConfigureAwait(false);
+                result = t.Select(x => x.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(key);
+            }
+
+            return result;
+        }
+
+        string ICacheStore.StringGet(string key)
+        {
+            string result = null;
+            try
+            {
+                result = this.database.StringGet(key, CommandFlags.PreferSlave);
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(key);
+            }
+
+            return result;
+        }
+
+        void ICacheStore.StringSet(string key, string value, TimeSpan? expiredIn)
+        {
+            try
+            {
+                this.database.StringSet(key, value, expiredIn);
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        async Task<string> ICacheStore.StringGetAsync(string key)
+        {
+            string result = null;
+            try
+            {
+                result = await this.database.StringGetAsync(key, this.readFlag).ConfigureAwait(false);
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return result;
+        }
+
+        async Task ICacheStore.SetAsync(string key, string value, TimeSpan? expiredIn)
+        {
+            try
+            {
+                await this.database.StringSetAsync(key, value, expiredIn).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
     }
 }

@@ -6,15 +6,23 @@
 
     public interface ICacheStore
     {
-        T Get<T>(string key);
+        string StringGet(string key);
 
-        void Set<T>(string key, T value, TimeSpan? expiredIn = null);
+        void StringSet(string key, string value, TimeSpan? expiredIn = null);
+
+        T GetJson<T>(string key);
+
+        void JsonSet<T>(string key, T value, TimeSpan? expiredIn = null);
 
         void Remove(string key);
 
-        Task<T> GetAsync<T>(string key);
+        Task<string> StringGetAsync(string key);
 
-        Task SetAsync<T>(string key, T value, TimeSpan? expiredIn = null);
+        Task SetAsync(string key, string value, TimeSpan? expiredIn = null);
+
+        Task<T> GetJsonAsync<T>(string key);
+
+        Task SetJsonAsync<T>(string key, T value, TimeSpan? expiredIn = null);
 
         Task RemoveAsync(string key);
 
@@ -23,5 +31,9 @@
         IDictionary<string, string> HashGet(string key);
 
         Task<IDictionary<string,string>> HashGetAsync(string key);
+
+        void SetAddAll(string key, IEnumerable<string> values);
+        Task<IEnumerable<string>> SetGetAsync(string key);
+        IEnumerable<string> SetGet(string key);
     }
 }
