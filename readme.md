@@ -18,6 +18,12 @@ Cached data schema:
 ## 1000 records
 
 ```
+BenchmarkDotNet=v0.11.5, OS=Windows 10.0.17763.475 (1809/October2018Update/Redstone5)
+Intel Core i7-3632QM CPU 2.20GHz (Ivy Bridge), 1 CPU, 8 logical and 4 physical cores
+.NET Core SDK=3.0.100-preview3-010431
+  [Host]     : .NET Core 2.0.9 (CoreCLR 4.6.26614.01, CoreFX 4.6.26614.01), 64bit RyuJIT  [AttachedDebugger]
+  DefaultJob : .NET Core 2.0.9 (CoreCLR 4.6.26614.01, CoreFX 4.6.26614.01), 64bit RyuJIT
+
 |               Method |        Mean |      Error |    StdDev | Rank |     Gen 0 |    Gen 1 | Gen 2 | Allocated |
 |--------------------- |------------:|-----------:|----------:|-----:|----------:|---------:|------:|----------:|
 |          O3_Set_Hash |    25.29 ms |  0.5044 ms |  1.311 ms |    1 |  718.7500 | 156.2500 |     - |   2.75 MB |
@@ -37,6 +43,30 @@ Cached data schema:
 | O2_Get_JilJsonString | 1.017 s | 0.0121 s | 0.0101 s | 1.021 s |    1 | 2000.0000 |     - |     - |   7.66 MB |
 |     O1_Get_Delimited | 1.032 s | 0.0204 s | 0.0477 s | 1.013 s |    1 | 1000.0000 |     - |     - |   3.82 MB |
 |    O2_Get_JsonString | 1.034 s | 0.0137 s | 0.0128 s | 1.032 s |    1 | 3000.0000 |     - |     - |   9.91 MB |
+```
+
+## 5000 records
+
+```
+|               Method |       Mean |     Error |    StdDev | Rank |     Gen 0 |    Gen 1 | Gen 2 | Allocated |
+|--------------------- |-----------:|----------:|----------:|-----:|----------:|---------:|------:|----------:|
+|          O3_Set_Hash |   130.1 ms |  2.674 ms |  7.884 ms |    1 | 4250.0000 | 500.0000 |     - |  13.76 MB |
+|          O4_Set_Sets |   143.2 ms |  3.413 ms | 10.064 ms |    2 | 2000.0000 | 500.0000 |     - |  11.52 MB |
+|     O1_Set_Delimited | 5,051.6 ms | 34.608 ms | 32.372 ms |    3 | 4000.0000 |        - |     - |  12.25 MB |
+| O2_Set_NetJsonString | 5,088.1 ms | 67.037 ms | 62.707 ms |    3 | 5000.0000 |        - |     - |  17.89 MB |
+| O2_Set_JilJsonString | 5,088.8 ms | 50.550 ms | 47.284 ms |    3 | 7000.0000 |        - |     - |  22.05 MB |
+|    O2_Set_JsonString | 5,151.9 ms | 48.104 ms | 42.643 ms |    3 | 8000.0000 |        - |     - |  24.81 MB |
+```
+
+```
+|               Method |    Mean |    Error |   StdDev | Rank |      Gen 0 | Gen 1 | Gen 2 | Allocated |
+|--------------------- |--------:|---------:|---------:|-----:|-----------:|------:|------:|----------:|
+|     O1_Get_Delimited | 5.008 s | 0.0373 s | 0.0349 s |    1 |  6000.0000 |     - |     - |  19.19 MB |
+|          O3_Get_Hash | 5.053 s | 0.0331 s | 0.0293 s |    1 |  4000.0000 |     - |     - |  11.85 MB |
+| O2_Get_NetJsonString | 5.065 s | 0.0540 s | 0.0479 s |    1 | 12000.0000 |     - |     - |  36.53 MB |
+| O2_Get_JilJsonString | 5.070 s | 0.0311 s | 0.0275 s |    1 | 13000.0000 |     - |     - |  38.32 MB |
+|    O2_Get_JsonString | 5.107 s | 0.0528 s | 0.0494 s |    1 | 17000.0000 |     - |     - |  49.59 MB |
+|          O4_Get_Sets | 5.118 s | 0.1012 s | 0.0994 s |    1 |  5000.0000 |     - |     - |   15.2 MB |
 ```
 
 ## Conclusions
