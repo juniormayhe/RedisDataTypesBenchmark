@@ -14,7 +14,9 @@
         {
             Console.WriteLine("Starting application");
 
-            var summary = BenchmarkRunner.Run<RedisBenchmarks>();
+            var writeSummary = BenchmarkRunner.Run<RedisBenchmarksWrite>();
+
+            var readSummary = BenchmarkRunner.Run<RedisBenchmarksRead>();
 
             Console.WriteLine("The end");
 
