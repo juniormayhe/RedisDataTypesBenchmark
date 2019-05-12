@@ -118,6 +118,7 @@
                 IDictionary<string, IEnumerable<string>> reasons = Jil.JSON.Deserialize<IDictionary<string, IEnumerable<string>>>(result);
             }
         }
+
         #endregion
 
         #region option 2 NetJSON - Each redis key has a json string representing object (current routing way) 
@@ -142,6 +143,7 @@
                 IDictionary<string, IEnumerable<string>> reasons = NetJSON.Deserialize<IDictionary<string, IEnumerable<string>>>(result);
             }
         }
+
         #endregion
 
         #region option 3 Each redis key has a hash with field-value pairs of strings
@@ -215,6 +217,7 @@
                 }
             }
         }
+
         #endregion
 
         #region private methods
