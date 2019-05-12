@@ -33,7 +33,7 @@ Intel Core i7-3632QM CPU 2.20GHz (Ivy Bridge), 1 CPU, 8 logical and 4 physical c
 
 ## Results for running only gets
 
-Reading cache for 252 keys have similar performance and datatype won't impact so much, but the best memory allocation are Hashes and Sets:
+Reading cache for 252 keys have similar performance and datatype won't impact so much, but the best memory allocations are Hashes and Sets:
 
 ```
 |               Method |     Mean |    Error |   StdDev | Rank |    Gen 0 | Gen 1 | Gen 2 |  Allocated |
@@ -48,7 +48,7 @@ Reading cache for 252 keys have similar performance and datatype won't impact so
 
 ## Results for running only sets
 
-Saving cache for 252 keys as Hash and Sets datatypes seem faster than other approaches. Memory allocation are better with Sets and Delimited Text and Hashes:
+Saving cache for 252 keys as Hash and Sets datatypes seem faster than other approaches. Memory allocations are better with Sets and Delimited Text and Hashes:
 
 ```
 |               Method |       Mean |     Error |    StdDev | Rank |    Gen 0 |   Gen 1 | Gen 2 |  Allocated |
