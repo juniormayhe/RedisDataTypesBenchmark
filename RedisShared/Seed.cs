@@ -1,4 +1,4 @@
-﻿namespace RedisDatatypesBenchmark
+﻿namespace RedisShared
 {
     using AutoFixture;
 
@@ -16,11 +16,13 @@
 
             for (int i = 0; i < totalKeys; i++)
             {
-                IEnumerable<string> removedEntities = fixture.CreateMany<int>(totalRemovedEntities).Select(entityId => Convert.ToString(entityId));
-
-                IDictionary<string, IEnumerable<string>> removedEntitiesByReason = fixture.Build<KeyValuePair<string, IEnumerable<string>>>()
-                    .CreateMany(totalReasons)
-                    .ToDictionary(x => x.Key, x => removedEntities);
+                IDictionary<string, IEnumerable<string>> removedEntitiesByReason = new Dictionary<string, IEnumerable<string>>();
+                List<string> reasons = fixture.CreateMany<string>(totalReasons).ToList();
+                foreach (var reason in reasons)
+                {
+                    var removed = fixture.CreateMany<int>(totalRemovedEntities).Select(x => x.ToString());
+                    removedEntitiesByReason.Add(reason, removed);
+                }
 
                 RoutingLog routingLog = fixture.Build<RoutingLog>().With(x => x.RemovedEntitiesByReason, removedEntitiesByReason).Create();
 

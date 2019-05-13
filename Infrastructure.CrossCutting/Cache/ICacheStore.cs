@@ -35,5 +35,7 @@
         void SetAddAll(string key, IEnumerable<string> values);
         Task<IEnumerable<string>> SetGetAsync(string key);
         IEnumerable<string> SetGet(string key);
+
+        void Truncate(string[] patterns);
     }
 }

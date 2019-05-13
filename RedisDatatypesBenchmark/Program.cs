@@ -3,13 +3,11 @@
     using BenchmarkDotNet.Running;
 
     using Infrastructure.CrossCutting.Cache;
-
+    using RedisShared;
     using System;
 
     public class Program
     {
-        private static ICacheStore cacheStore;
-        
         public static void Main(string[] args)
         {
             Console.WriteLine("Starting application");
@@ -18,10 +16,13 @@
 
             var readSummary = BenchmarkRunner.Run<RedisBenchmarksRead>();
 
+            // clean up data
+            string[] patterns = { "o1_*", "o2_*", "o3_*", "o4_*" };
+            CacheHelper.GetCacheStore().Truncate(patterns);
+
             Console.WriteLine("The end");
 
             Console.ReadLine();
         }
-
     }
 }

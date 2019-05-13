@@ -7,7 +7,7 @@
 
     using NetJSON;
     using Newtonsoft.Json;
-
+    using RedisShared;
     using System.Collections.Generic;
 
     [RankColumn]
@@ -27,17 +27,16 @@
             // warmup cache for further reading
             this.ListForReading = Seed.BuildReasons(totalKeys: 5000, totalReasons: 2, totalRemovedEntities: 4);
             this.WarmUpCacheForReading();
-
         }
 
         #region option 1 Each redis key has a delimited text, sequences of {"REASON IDENTIFIER":["REMOVED ID","REMOVED ID", ...]}
-        
+
         [Benchmark]
         public void O1_Get_Delimited()
         {
             foreach (var item in this.ListForReading)
             {
-                string key = $"o1_delimited{item.GetKey()}";
+                string key = $"o1_delimited{item.GetFullKey()}";
                 IEnumerable<string> rows = this.Cache.StringGet(key).Split("|");
                 var result = new Dictionary<string, IEnumerable<string>>();
                 foreach (string row in rows)
@@ -58,7 +57,7 @@
         {
             foreach (var item in ListForReading)
             {
-                string key = $"o2_json{item.GetKey()}";
+                string key = $"o2_json{item.GetFullKey()}";
                 string result = this.Cache.GetJson<string>(key);
                 result = System.Text.RegularExpressions.Regex.Unescape(result);
                 IDictionary<string, IEnumerable<string>> reasons = JsonConvert.DeserializeObject<IDictionary<string, IEnumerable<string>>>(result);
@@ -74,7 +73,7 @@
         {
             foreach (var item in this.ListForReading)
             {
-                string key = $"o2_jiljson{item.GetKey()}";
+                string key = $"o2_jiljson{item.GetFullKey()}";
                 string result = this.Cache.GetJson<string>(key);
                 result = System.Text.RegularExpressions.Regex.Unescape(result);
                 IDictionary<string, IEnumerable<string>> reasons = Jil.JSON.Deserialize<IDictionary<string, IEnumerable<string>>>(result);
@@ -90,7 +89,7 @@
         {
             foreach (var item in this.ListForReading)
             {
-                string key = $"o2_netjson{item.GetKey()}";
+                string key = $"o2_netjson{item.GetFullKey()}";
                 string result = this.Cache.GetJson<string>(key);
                 result = System.Text.RegularExpressions.Regex.Unescape(result);
                 IDictionary<string, IEnumerable<string>> reasons = NetJSON.Deserialize<IDictionary<string, IEnumerable<string>>>(result);
@@ -106,7 +105,7 @@
         {
             foreach (var item in this.ListForReading)
             {
-                string key = $"o3_hash{item.GetKey()}";
+                string key = $"o3_hash{item.GetFullKey()}";
                 // field and comma delimited entity ids
                 IDictionary<string, string> values = this.Cache.HashGet(key);
 
@@ -127,7 +126,7 @@
         {
             foreach (var item in this.ListForReading)
             {
-                string key = $"o4_set{item.GetKey()}";
+                string key = $"o4_set{item.GetFullKey()}";
 
                 IEnumerable<string> rows = this.Cache.SetGet(key);
                 var result = new Dictionary<string, IEnumerable<string>>();
@@ -146,7 +145,7 @@
         {
             foreach (var item in this.ListForReading)
             {
-                string key = item.GetKey();
+                string key = item.GetFullKey();
 
                 var hashEntries = new Dictionary<string, string>();
                 var plainTexts = new List<string>();

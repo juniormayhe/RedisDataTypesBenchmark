@@ -9,6 +9,8 @@
 
         IServer Server(EndPoint endPoint);
 
+        IServer FirstServer();
+
         EndPoint[] GetEndpoints();
 
         void FlushDb(int? db = null);

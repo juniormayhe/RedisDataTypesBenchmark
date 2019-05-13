@@ -7,7 +7,7 @@
 
     using NetJSON;
     using Newtonsoft.Json;
-
+    using RedisShared;
     using System.Collections.Generic;
 
     [RankColumn]
@@ -25,14 +25,14 @@
 
             this.ListForWriting = Seed.BuildReasons(totalKeys: 5000, totalReasons: 2, totalRemovedEntities: 4);
         }
-
+        
         #region option 1 Each redis key has a delimited text, sequences of {"REASON IDENTIFIER":["REMOVED ID","REMOVED ID", ...]}
         [Benchmark]
         public void O1_Set_Delimited()
         {
             foreach (var item in this.ListForWriting)
             {
-                string key = $"o1_delimited{item.GetKey()}";
+                string key = $"o1_delimited{item.GetFullKey()}";
                 var values = new List<string>();
                 foreach (var kvp in item.RemovedEntitiesByReason)
                 {
@@ -52,7 +52,7 @@
         {
             foreach (var item in ListForWriting)
             {
-                string key = $"o2_json{item.GetKey()}";
+                string key = $"o2_json{item.GetFullKey()}";
                 this.Cache.JsonSet<string>(key, JsonConvert.SerializeObject(item.RemovedEntitiesByReason));
             }
         }
@@ -65,7 +65,7 @@
         {
             foreach (var item in this.ListForWriting)
             {
-                string key = $"o2_jiljson{item.GetKey()}";
+                string key = $"o2_jiljson{item.GetFullKey()}";
                 this.Cache.JsonSet<string>(key, Jil.JSON.Serialize(item.RemovedEntitiesByReason));
             }
         }
@@ -78,7 +78,7 @@
         {
             foreach (var item in this.ListForWriting)
             {
-                string key = $"o2_netjson{item.GetKey()}";
+                string key = $"o2_netjson{item.GetFullKey()}";
                 this.Cache.JsonSet<string>(key, NetJSON.Serialize(item.RemovedEntitiesByReason));
             }
         }
@@ -94,7 +94,7 @@
         {
             foreach (var item in this.ListForWriting)
             {
-                string key = $"o3_hash{item.GetKey()}";
+                string key = $"o3_hash{item.GetFullKey()}";
                 IDictionary<string, string> entries = new Dictionary<string, string>();
                 foreach (var removedEntityByReason in item.RemovedEntitiesByReason)
                 {
@@ -113,7 +113,7 @@
         {
             foreach (var item in this.ListForWriting)
             {
-                string key = $"o4_set{item.GetKey()}";
+                string key = $"o4_set{item.GetFullKey()}";
                 var values = new List<string>();
                 foreach (var kvp in item.RemovedEntitiesByReason)
                 {

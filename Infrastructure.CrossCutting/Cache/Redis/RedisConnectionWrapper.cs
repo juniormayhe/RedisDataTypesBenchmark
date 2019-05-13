@@ -42,6 +42,12 @@
             return this.GetConnection().GetServer(endPoint);
         }
 
+        public IServer FirstServer()
+        {
+            EndPoint[] endPoint = connection.GetEndPoints();
+            return this.GetConnection().GetServer(endPoint[0]);
+        }
+
         public EndPoint[] GetEndpoints()
         {
             return this.GetConnection().GetEndPoints();

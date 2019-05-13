@@ -15,10 +15,12 @@
     {
         private readonly IDatabase database;
         private readonly CommandFlags readFlag;
+        private readonly IServer server;
 
         public RedisCacheStore(IRedisConnectionWrapper connectionWrapper, RedisSettings redisSettings)
         {
             this.database = connectionWrapper.Database(redisSettings.DefaultDb);
+            this.server = connectionWrapper.FirstServer();
             this.readFlag = redisSettings.PreferSlaveForRead ? CommandFlags.PreferSlave : CommandFlags.PreferMaster;
         }
 
@@ -246,6 +248,19 @@
             catch (Exception ex)
             {
 
+            }
+        }
+
+        public void Truncate(string[] patterns)
+        {
+            foreach (var item in patterns)
+            {
+                IEnumerable<RedisKey> routingKeys = this.server.Keys(database: 5, pattern: item);
+
+                foreach (var key in routingKeys)
+                {
+                    database.KeyDelete(key);
+                }
             }
         }
     }

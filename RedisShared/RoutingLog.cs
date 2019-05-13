@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace RedisDatatypesBenchmark
+﻿namespace RedisShared
 {
+    using System;
+    using System.Collections.Generic;
+
     public class RoutingLog
     {
         public Guid RequestId { get; set; }
@@ -14,9 +13,14 @@ namespace RedisDatatypesBenchmark
 
         public IDictionary<string, IEnumerable<string>> RemovedEntitiesByReason { get; set; }
 
-        public string GetKey()
+        public string GetFullKey()
         {
             return $":RequestId_{this.RequestId}:ProductId_{this.ProductId}:VariantId_{this.VariantId}";
+        }
+
+        public string GetProductVariantKey()
+        {
+            return $"ProductId_{this.ProductId},VariantId_{this.VariantId}";
         }
     }
 }

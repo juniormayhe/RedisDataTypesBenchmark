@@ -1,6 +1,4 @@
-﻿
-
-namespace RedisDatatypesBenchmark
+﻿namespace RedisShared
 {
     using Infrastructure.CrossCutting.Cache;
     using Infrastructure.CrossCutting.Cache.Redis;
@@ -11,7 +9,6 @@ namespace RedisDatatypesBenchmark
 
     public static class CacheHelper
     {
-
         public static ICacheStore GetCacheStore()
         {
             RedisSettings redisSettings = GetRedisSettings();
@@ -29,8 +26,11 @@ namespace RedisDatatypesBenchmark
         private static RedisSettings GetRedisSettings()
         {
             var redisSettings = new RedisSettings();
+
             var config = new ConfigurationBuilder()
+                //.AddJsonFile("appsettings.Release.json", optional: false, reloadOnChange: true)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+
                 .Build();
 
             config.GetSection(nameof(RedisSettings)).Bind(redisSettings);
