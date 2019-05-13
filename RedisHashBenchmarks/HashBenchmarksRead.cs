@@ -25,17 +25,17 @@
 
             // warmup cache for further reading
             this.ListForReading = Seed.BuildReasons(totalKeys: 4, totalReasons: 2, totalRemovedEntities: 4);
-            this.WarmUpCacheForReading();
+            this.WarmUpCacheForReadingWithRequestIdAsKey();
+            this.WarmUpCacheForReadingWithAllFieldsAsKey();
         }
 
         /**
          * Structure for hashes could be
          * 
          * Key - RequestId
-         * |__ Field - ProductId:INT_VariantId:GUID_ReasonCode:STRING, Value - semi colon delimited string
-         * |__ Field - ProductId:INT_VariantId:GUID_ReasonCode:STRING, Value - semi colon delimited string
+         * |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - semi colon delimited string
+         * |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - semi colon delimited string
          */
-
         [Benchmark]
         public void O3_Get_Hash()
         {
@@ -53,8 +53,33 @@
             }
         }
 
+
+        /**
+         * Structure for hashes could be
+         * 
+         * Key - RequestId:ProductId:INT_VariantId:GUID
+         * |__ Field - Reason:STRING, Value - semi colon delimited string
+         * |__ Field - Reason:STRING, Value - semi colon delimited string
+         */
+        [Benchmark]
+        public void O3_Get_Hash_AllFieldsInKey()
+        {
+            foreach (var item in this.ListForReading)
+            {
+                string key = $"o3_hash{item.GetFullKey()}";
+                // field and comma delimited entity ids
+                IDictionary<string, string> values = this.Cache.HashGet(key);
+
+                var reasons = new Dictionary<string, IEnumerable<string>>();
+                foreach (var kvp in values)
+                {
+                    reasons.Add(kvp.Key, kvp.Value.Split(','));
+                }
+            }
+        }
+
         #region private methods
-        private void WarmUpCacheForReading()
+        private void WarmUpCacheForReadingWithRequestIdAsKey()
         {
             foreach (var item in this.ListForReading)
             {
@@ -71,6 +96,25 @@
                 }
                 
                 this.Cache.HashSet(key: $"o3_hash_RequestId_{key}", entries);
+            }
+        }
+
+        private void WarmUpCacheForReadingWithAllFieldsAsKey()
+        {
+            foreach (var item in this.ListForReading)
+            {
+                string key = item.GetFullKey();
+
+                var entries = new Dictionary<string, string>();
+
+                foreach (var removedEntityByReason in item.RemovedEntitiesByReason)
+                {
+                    string entityIds = string.Join(",", removedEntityByReason.Value);
+
+                    entries.Add(key, entityIds);
+                }
+
+                this.Cache.HashSet(key: $"o3_hash{key}", entries);
             }
         }
 
