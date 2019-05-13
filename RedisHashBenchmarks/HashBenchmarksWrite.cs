@@ -2,16 +2,17 @@
 {
     using BenchmarkDotNet.Attributes;
     using BenchmarkDotNet.Order;
+
     using Infrastructure.CrossCutting.Cache;
+
     using RedisShared;
-    using System;
+
     using System.Collections.Generic;
-    using System.Text;
 
     [RankColumn]
     [Orderer(SummaryOrderPolicy.FastestToSlowest, MethodOrderPolicy.Declared)]
     [MemoryDiagnoser]
-    public class HashBenchmarks
+    public class HashBenchmarksWrite
     {
         public IEnumerable<RoutingLog> ListForWriting { get; set; }
         public ICacheStore Cache { get; set; }
@@ -28,8 +29,8 @@
          * Structure for hashes could be
          * 
          * Key - RequestId
-         * |__ Field - ProductId_VariantId_ReasonCode, Value - semi colon delimited string
-         * |__ Field - ProductId_VariantId_ReasonCode, Value - semi colon delimited string
+         * |__ Field - ProductId:INT_VariantId:GUID_ReasonCode:STRING, Value - semi colon delimited string
+         * |__ Field - ProductId:INT_VariantId:GUID_ReasonCode:STRING, Value - semi colon delimited string
          */
 
         [Benchmark]
