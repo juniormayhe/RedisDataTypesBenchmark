@@ -29,10 +29,9 @@
          * Structure for hashes could be
          * 
          * Key - RequestId
-         * |__ Field - ProductId:INT_VariantId:GUID_ReasonCode:STRING, Value - semi colon delimited string
-         * |__ Field - ProductId:INT_VariantId:GUID_ReasonCode:STRING, Value - semi colon delimited string
+         * |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - semi colon delimited string
+         * |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - semi colon delimited string
          */
-
         [Benchmark]
         public void O3_Set_Hash()
         {
@@ -46,6 +45,32 @@
                     string entityIds = string.Join(",", removedEntityByReason.Value);
 
                     entries.Add(productVariantReasonKey, entityIds);
+                }
+                this.Cache.HashSet(key, entries);
+            }
+        }
+
+        /**
+         * Structure for hashes could be
+         * 
+         * Key - RequestId:ProductId:INT_VariantId:GUID
+         * |__ Field - Reason:STRING, Value - semi colon delimited string
+         * |__ Field - Reason:STRING, Value - semi colon delimited string
+         */
+        [Benchmark]
+        public void O3_Set_Hash_AllFieldsInKey()
+        {
+            foreach (var item in this.ListForWriting)
+            {
+                string key = $"o3_hash{item.GetFullKey()}";
+                IDictionary<string, string> entries = new Dictionary<string, string>();
+                foreach (var removedEntityByReason in item.RemovedEntitiesByReason)
+                {
+                    //add fields for Reason and RemovedEntityIds
+                    string reasonKey = removedEntityByReason.Key;
+                    string entityIds = string.Join(",", removedEntityByReason.Value);
+                    
+                    entries.Add(reasonKey, entityIds);
                 }
                 this.Cache.HashSet(key, entries);
             }
