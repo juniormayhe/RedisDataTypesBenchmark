@@ -8,6 +8,7 @@
 
     public static class Seed
     {
+        //todo:a void adding same item in dicitonary twice
         public static IEnumerable<RoutingLog> BuildReasons(int totalKeys, int totalReasons, int totalRemovedEntities)
         {
             Fixture fixture = new Fixture();
