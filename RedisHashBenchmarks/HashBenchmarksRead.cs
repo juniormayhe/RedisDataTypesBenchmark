@@ -39,20 +39,23 @@
         [Benchmark]
         public void O3_Get_Hash()
         {
-            foreach (var item in this.ListForReading)
+            var reasons = new Dictionary<string, IEnumerable<string>>();
+            foreach (var item in ListForReading)
             {
-                string key = $"o3_hash_RequestId_{item.RequestId}";
-                // field and comma delimited entity ids
-                IDictionary<string, string> values = this.Cache.HashGet(key);
+                string key = $"o3_hash:RequestId_{item.RequestId}";
+                
+                IDictionary<string, string> values = Cache.HashGet(key);
 
-                var reasons = new Dictionary<string, IEnumerable<string>>();
+                List<string> items = new List<string>();
                 foreach (var kvp in values)
                 {
-                    reasons.Add(kvp.Key, kvp.Value.Split(','));
+                    string productAndVariantAndReason = kvp.Key;
+                    string reasonAndRemovedEntities = kvp.Value;
+                    items.Add($"{productAndVariantAndReason}:{reasonAndRemovedEntities}");
                 }
+                reasons.Add(key, items);
             }
         }
-
 
         /**
          * Structure for hashes could be
@@ -64,17 +67,21 @@
         [Benchmark]
         public void O3_Get_Hash_AllFieldsInKey()
         {
+            var reasons = new Dictionary<string, IEnumerable<string>>();
             foreach (var item in this.ListForReading)
             {
-                string key = $"o3_hash{item.GetFullKey()}";
-                // field and comma delimited entity ids
+                string key = $"o3_hash:{item.GetFullKey()}";
+                
                 IDictionary<string, string> values = this.Cache.HashGet(key);
 
-                var reasons = new Dictionary<string, IEnumerable<string>>();
+                List<string> items = new List<string>();
                 foreach (var kvp in values)
                 {
-                    reasons.Add(kvp.Key, kvp.Value.Split(','));
+                    string reason = kvp.Key;
+                    string reasonAndRemovedEntities = kvp.Value;
+                    items.Add($"{reason}:{reasonAndRemovedEntities}");
                 }
+                reasons.Add(key, items);
             }
         }
 
@@ -83,19 +90,19 @@
         {
             foreach (var item in this.ListForReading)
             {
-                string key = item.RequestId.ToString();
+                string key = $"o3_hash:RequestId_{item.RequestId}";
 
-                var entries = new Dictionary<string, string>();
+                var entriesForHash = new Dictionary<string, string>();
 
                 foreach (var removedEntityByReason in item.RemovedEntitiesByReason)
                 {
                     string productVariantReasonKey = $"{item.GetProductVariantKey()},Reason_{removedEntityByReason.Key}";
                     string entityIds = string.Join(",", removedEntityByReason.Value);
 
-                    entries.Add(productVariantReasonKey, entityIds);
+                    entriesForHash.Add(productVariantReasonKey, entityIds);
                 }
                 
-                this.Cache.HashSet(key: $"o3_hash_RequestId_{key}", entries);
+                this.Cache.HashSet(key, entriesForHash);
             }
         }
 
@@ -103,18 +110,19 @@
         {
             foreach (var item in this.ListForReading)
             {
-                string key = item.GetFullKey();
+                string key = $"o3_hash:{item.GetFullKey()}";
 
-                var entries = new Dictionary<string, string>();
+                var entriesForHash = new Dictionary<string, string>();
 
                 foreach (var removedEntityByReason in item.RemovedEntitiesByReason)
                 {
+                    string reasonCode = removedEntityByReason.Key;
                     string entityIds = string.Join(",", removedEntityByReason.Value);
 
-                    entries.Add(key, entityIds);
+                    entriesForHash.Add(reasonCode, entityIds);
                 }
 
-                this.Cache.HashSet(key: $"o3_hash{key}", entries);
+                this.Cache.HashSet(key, entriesForHash);
             }
         }
 

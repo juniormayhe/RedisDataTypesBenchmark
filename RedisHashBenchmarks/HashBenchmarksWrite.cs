@@ -37,16 +37,16 @@
         {
             foreach (var item in this.ListForWriting)
             {
-                string key = $"o3_hash_RequestId_{item.RequestId}";
-                IDictionary<string, string> entries = new Dictionary<string, string>();
+                string key = $"o3_hash:RequestId_{item.RequestId}";
+                IDictionary<string, string> entriesForHash = new Dictionary<string, string>();
                 foreach (var removedEntityByReason in item.RemovedEntitiesByReason)
                 {
                     string productVariantReasonKey = $"{item.GetProductVariantKey()},Reason_{removedEntityByReason.Key}";
                     string entityIds = string.Join(",", removedEntityByReason.Value);
 
-                    entries.Add(productVariantReasonKey, entityIds);
+                    entriesForHash.Add(productVariantReasonKey, entityIds);
                 }
-                this.Cache.HashSet(key, entries);
+                this.Cache.HashSet(key, entriesForHash);
             }
         }
 
@@ -62,17 +62,17 @@
         {
             foreach (var item in this.ListForWriting)
             {
-                string key = $"o3_hash{item.GetFullKey()}";
-                IDictionary<string, string> entries = new Dictionary<string, string>();
+                string key = $"o3_hash:{item.GetFullKey()}";
+                IDictionary<string, string> entriesForHash = new Dictionary<string, string>();
                 foreach (var removedEntityByReason in item.RemovedEntitiesByReason)
                 {
                     //add fields for Reason and RemovedEntityIds
                     string reasonKey = removedEntityByReason.Key;
                     string entityIds = string.Join(",", removedEntityByReason.Value);
                     
-                    entries.Add(reasonKey, entityIds);
+                    entriesForHash.Add(reasonKey, entityIds);
                 }
-                this.Cache.HashSet(key, entries);
+                this.Cache.HashSet(key, entriesForHash);
             }
         }
     }

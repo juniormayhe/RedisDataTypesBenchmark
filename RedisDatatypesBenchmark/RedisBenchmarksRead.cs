@@ -8,6 +8,7 @@
     using NetJSON;
     using Newtonsoft.Json;
     using RedisShared;
+    using System;
     using System.Collections.Generic;
 
     [RankColumn]
@@ -16,7 +17,7 @@
     public class RedisBenchmarksRead
     {
         public IEnumerable<RoutingLog> ListForReading { get; set; }
-        
+
         public ICacheStore Cache { get; set; }
 
         [GlobalSetup]
@@ -36,7 +37,7 @@
         {
             foreach (var item in this.ListForReading)
             {
-                string key = $"o1_delimited{item.GetFullKey()}";
+                string key = $"o1_delimited:{item.GetFullKey()}";
                 IEnumerable<string> rows = this.Cache.StringGet(key).Split("|");
                 var result = new Dictionary<string, IEnumerable<string>>();
                 foreach (string row in rows)
@@ -57,7 +58,7 @@
         {
             foreach (var item in ListForReading)
             {
-                string key = $"o2_json{item.GetFullKey()}";
+                string key = $"o2_json:{item.GetFullKey()}";
                 string result = this.Cache.GetJson<string>(key);
                 result = System.Text.RegularExpressions.Regex.Unescape(result);
                 IDictionary<string, IEnumerable<string>> reasons = JsonConvert.DeserializeObject<IDictionary<string, IEnumerable<string>>>(result);
@@ -73,7 +74,7 @@
         {
             foreach (var item in this.ListForReading)
             {
-                string key = $"o2_jiljson{item.GetFullKey()}";
+                string key = $"o2_jiljson:{item.GetFullKey()}";
                 string result = this.Cache.GetJson<string>(key);
                 result = System.Text.RegularExpressions.Regex.Unescape(result);
                 IDictionary<string, IEnumerable<string>> reasons = Jil.JSON.Deserialize<IDictionary<string, IEnumerable<string>>>(result);
@@ -89,7 +90,7 @@
         {
             foreach (var item in this.ListForReading)
             {
-                string key = $"o2_netjson{item.GetFullKey()}";
+                string key = $"o2_netjson:{item.GetFullKey()}";
                 string result = this.Cache.GetJson<string>(key);
                 result = System.Text.RegularExpressions.Regex.Unescape(result);
                 IDictionary<string, IEnumerable<string>> reasons = NetJSON.Deserialize<IDictionary<string, IEnumerable<string>>>(result);
@@ -105,7 +106,7 @@
         {
             foreach (var item in this.ListForReading)
             {
-                string key = $"o3_hash{item.GetFullKey()}";
+                string key = $"o3_hash:{item.GetFullKey()}";
                 // field and comma delimited entity ids
                 IDictionary<string, string> values = this.Cache.HashGet(key);
 
@@ -126,7 +127,7 @@
         {
             foreach (var item in this.ListForReading)
             {
-                string key = $"o4_set{item.GetFullKey()}";
+                string key = $"o4_set:{item.GetFullKey()}";
 
                 IEnumerable<string> rows = this.Cache.SetGet(key);
                 var result = new Dictionary<string, IEnumerable<string>>();
@@ -155,15 +156,15 @@
                     hashEntries.Add(kvp.Key, string.Join(",", kvp.Value));
                     // delimited
                     plainTexts.Add($"{kvp.Key}:{string.Join(",", kvp.Value)}");
-                    this.Cache.SetAddAll(key: $"o4_set{key}", plainTexts);
+                    this.Cache.SetAddAll(key: $"o4_set:{key}", plainTexts);
                 }
-                this.Cache.StringSet(key: $"o1_delimited{key}", string.Join("|", plainTexts));
-                this.Cache.HashSet(key: $"o3_hash{key}", hashEntries);
+                this.Cache.StringSet(key: $"o1_delimited:{key}", string.Join("|", plainTexts));
+                this.Cache.HashSet(key: $"o3_hash:{key}", hashEntries);
 
                 //jsons
-                this.Cache.JsonSet(key: $"o2_json{key}", JsonConvert.SerializeObject(item.RemovedEntitiesByReason));
-                this.Cache.JsonSet(key: $"o2_jiljson{key}", Jil.JSON.Serialize(item.RemovedEntitiesByReason));
-                this.Cache.JsonSet(key: $"o2_netjson{key}", NetJSON.Serialize(item.RemovedEntitiesByReason));
+                this.Cache.JsonSet(key: $"o2_json:{key}", JsonConvert.SerializeObject(item.RemovedEntitiesByReason));
+                this.Cache.JsonSet(key: $"o2_jiljson:{key}", Jil.JSON.Serialize(item.RemovedEntitiesByReason));
+                this.Cache.JsonSet(key: $"o2_netjson:{key}", NetJSON.Serialize(item.RemovedEntitiesByReason));
             }
         }
 

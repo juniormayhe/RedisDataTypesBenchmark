@@ -32,7 +32,7 @@
         {
             foreach (var item in this.ListForWriting)
             {
-                string key = $"o1_delimited{item.GetFullKey()}";
+                string key = $"o1_delimited:{item.GetFullKey()}";
                 var values = new List<string>();
                 foreach (var kvp in item.RemovedEntitiesByReason)
                 {
@@ -52,7 +52,7 @@
         {
             foreach (var item in ListForWriting)
             {
-                string key = $"o2_json{item.GetFullKey()}";
+                string key = $"o2_json:{item.GetFullKey()}";
                 this.Cache.JsonSet<string>(key, JsonConvert.SerializeObject(item.RemovedEntitiesByReason));
             }
         }
@@ -65,7 +65,7 @@
         {
             foreach (var item in this.ListForWriting)
             {
-                string key = $"o2_jiljson{item.GetFullKey()}";
+                string key = $"o2_jiljson:{item.GetFullKey()}";
                 this.Cache.JsonSet<string>(key, Jil.JSON.Serialize(item.RemovedEntitiesByReason));
             }
         }
@@ -78,7 +78,7 @@
         {
             foreach (var item in this.ListForWriting)
             {
-                string key = $"o2_netjson{item.GetFullKey()}";
+                string key = $"o2_netjson:{item.GetFullKey()}";
                 this.Cache.JsonSet<string>(key, NetJSON.Serialize(item.RemovedEntitiesByReason));
             }
         }
@@ -94,7 +94,7 @@
         {
             foreach (var item in this.ListForWriting)
             {
-                string key = $"o3_hash{item.GetFullKey()}";
+                string key = $"o3_hash:{item.GetFullKey()}";
                 IDictionary<string, string> entries = new Dictionary<string, string>();
                 foreach (var removedEntityByReason in item.RemovedEntitiesByReason)
                 {
@@ -113,7 +113,7 @@
         {
             foreach (var item in this.ListForWriting)
             {
-                string key = $"o4_set{item.GetFullKey()}";
+                string key = $"o4_set:{item.GetFullKey()}";
                 var values = new List<string>();
                 foreach (var kvp in item.RemovedEntitiesByReason)
                 {

@@ -15,12 +15,12 @@
 
         public string GetFullKey()
         {
-            return $":RequestId_{this.RequestId}:ProductId_{this.ProductId}:VariantId_{this.VariantId}";
+            return $"RequestId_{this.RequestId}:ProductId_{this.ProductId}:VariantId_{this.VariantId}";
         }
 
         public string GetProductVariantKey()
         {
-            return $"ProductId_{this.ProductId},VariantId_{this.VariantId}";
+            return $"ProductId_{this.ProductId}:VariantId_{this.VariantId}";
         }
     }
 }
