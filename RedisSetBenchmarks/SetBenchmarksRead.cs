@@ -40,7 +40,7 @@
          * where both Reason is a string and Entities is a semi colon delimited string
          */
         [Benchmark]
-        public void O4_Get_Set_RequestIdInKey()
+        public void O1_ReadSet_RequestIdInKey()
         {
             var reasons = new Dictionary<string, IEnumerable<string>>();
             foreach (var item in ListForReading)
@@ -71,7 +71,7 @@
          * where both Reason is a string and Entities is a semi colon delimited string
          */
         [Benchmark]
-        public void O4_Get_Set_RequestIdAndProductIdInKey()
+        public void O2_ReadSet_RequestIdAndProductIdInKey()
         {
             var reasons = new Dictionary<string, IEnumerable<string>>();
             foreach (var item in ListForReading)
@@ -102,7 +102,7 @@
          * where both Reason is a string and Entities is a semi colon delimited string
          */
         [Benchmark]
-        public void O4_Get_Set_AllFieldsInKey()
+        public void O3_ReadSet_AllFieldsInKey()
         {
             var reasons = new Dictionary<string, IEnumerable<string>>();
             foreach (var item in this.ListForReading)

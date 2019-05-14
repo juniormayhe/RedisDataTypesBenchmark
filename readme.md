@@ -72,22 +72,24 @@ Evaluated Hash value arrangements:
 RequestIdInKey
 ```
  Key - RequestId_GUID
- |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - semi colon delimited string
- |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - semi colon delimited string
+ |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - Entities
+ |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - Entities
 ```
 
 RequestIdAndProductIdInKey
 ```
  Key - RequestId_GUID:ProductId:INT
- |__ Field - VariantId:GUID_Reason:STRING, Value - semi colon delimited string
- |__ Field - VariantId:GUID_Reason:STRING, Value - semi colon delimited string
+ |__ Field - VariantId:GUID_Reason:STRING, Entities, Value - Entities
+ |__ Field - VariantId:GUID_Reason:STRING, Entities, Value - Entities
 ```
 AllFieldsInKey
 ```
  Key - RequestId_GUID:ProductId_INT:VariantId_GUID
- |__ Field - Reason:STRING, Value - semi colon delimited string
- |__ Field - Reason:STRING, Value - semi colon delimited string
+ |__ Field - Reason:STRING, Entities, Value - Entities
+ |__ Field - Reason:STRING, Entities, Value - Entities
 ```
+
+Where Entities are semi colon delimited string
 
 ### 5000 records
 
@@ -107,7 +109,7 @@ AllFieldsInKey
 
 ## Narrowing observation of using hashes
 
-Evaluated Hash value arrangements:
+Evaluated Set value arrangements:
 
 RequestIdInKey
 ```
@@ -138,17 +140,17 @@ where both Reason is a string and Entities is a semi colon delimited string
 ### 5000 records
 
 ```
-|                                  Method |     Mean |    Error |   StdDev | Rank |     Gen 0 |    Gen 1 | Gen 2 | Allocated |
-|---------------------------------------- |---------:|---------:|---------:|-----:|----------:|---------:|------:|----------:|
-|            O3_Set_AddAll_AllFieldsInKey | 94.43 ms | 1.884 ms | 2.641 ms |    1 | 2166.6667 | 500.0000 |     - |   11.8 MB |
-| O3_Set_AddAll_RequestIdAndProductdInKey | 97.06 ms | 1.941 ms | 2.845 ms |    2 | 2333.3333 | 500.0000 |     - |  13.83 MB |
-|           O4_Set_AddtAll_RequestIdInKey | 98.23 ms | 1.934 ms | 4.325 ms |    2 | 2400.0000 | 600.0000 |     - |  14.64 MB |
+|                                 Method |     Mean |    Error |   StdDev | Rank |     Gen 0 |    Gen 1 | Gen 2 | Allocated |
+|--------------------------------------- |---------:|---------:|---------:|-----:|----------:|---------:|------:|----------:|
+|            O3_SetAddAll_AllFieldsInKey | 91.99 ms | 1.818 ms | 2.299 ms |    1 | 2000.0000 | 500.0000 |     - |   11.8 MB |
+|            O1_SetAddAll_RequestIdInKey | 95.30 ms | 1.827 ms | 2.501 ms |    2 | 2600.0000 | 600.0000 |     - |  14.64 MB |
+| O2_SetAddAll_RequestIdAndProductdInKey | 95.31 ms | 1.846 ms | 2.929 ms |    2 | 2333.3333 | 666.6667 |     - |  13.83 MB |
 
 |                                Method |    Mean |    Error |   StdDev | Rank |     Gen 0 |     Gen 1 | Gen 2 | Allocated |
 |-------------------------------------- |--------:|---------:|---------:|-----:|----------:|----------:|------:|----------:|
-|             O4_Get_Set_RequestIdInKey | 4.059 s | 0.0763 s | 0.0783 s |    1 | 3000.0000 | 1000.0000 |     - |  18.43 MB |
-| O4_Get_Set_RequestIdAndProductIdInKey | 4.059 s | 0.0736 s | 0.0652 s |    1 | 3000.0000 | 1000.0000 |     - |  17.61 MB |
-|             O4_Get_Set_AllFieldsInKey | 4.102 s | 0.0795 s | 0.1061 s |    1 | 3000.0000 | 1000.0000 |     - |  15.81 MB |
+|             O1_ReadSet_RequestIdInKey | 4.199 s | 0.0759 s | 0.1309 s |    1 | 3000.0000 | 1000.0000 |     - |  18.43 MB |
+| O2_ReadSet_RequestIdAndProductIdInKey | 4.246 s | 0.0846 s | 0.0869 s |    1 | 3000.0000 | 1000.0000 |     - |  17.62 MB |
+|             O3_ReadSet_AllFieldsInKey | 4.256 s | 0.0838 s | 0.0897 s |    1 | 3000.0000 | 1000.0000 |     - |  15.81 MB |
 ```
 
 ## Conclusions

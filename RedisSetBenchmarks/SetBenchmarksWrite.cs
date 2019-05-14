@@ -35,7 +35,7 @@
          * where both Reason is a string and Entities is a semi colon delimited string
          */
         [Benchmark]
-        public void O4_Set_AddtAll_RequestIdInKey()
+        public void O1_SetAddAll_RequestIdInKey()
         {
             foreach (var item in this.ListForWriting)
             {
@@ -62,7 +62,7 @@
          * where both Reason is a string and Entities is a semi colon delimited string
          */
         [Benchmark]
-        public void O3_Set_AddAll_RequestIdAndProductdInKey()
+        public void O2_SetAddAll_RequestIdAndProductdInKey()
         {
             foreach (var item in this.ListForWriting)
             {
@@ -89,7 +89,7 @@
          * where both Reason is a string and Entities is a semi colon delimited string
          */
         [Benchmark]
-        public void O3_Set_AddAll_AllFieldsInKey()
+        public void O3_SetAddAll_AllFieldsInKey()
         {
             foreach (var item in this.ListForWriting)
             {

@@ -33,7 +33,7 @@
          * |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - semi colon delimited string
          */
         [Benchmark]
-        public void O3_Set_Hash_RequestIdInKey()
+        public void O1_SetHash_RequestIdInKey()
         {
             foreach (var item in this.ListForWriting)
             {
@@ -58,7 +58,7 @@
          * |__ Field - VariantId_GUID:Reason:STRING, Value - semi colon delimited string
          */
         [Benchmark]
-        public void O3_Set_Hash_RequestIdAndProductdInKey()
+        public void O2_SetHash_RequestIdAndProductdInKey()
         {
             foreach (var item in this.ListForWriting)
             {
@@ -83,7 +83,7 @@
          * |__ Field - Reason:STRING, Value - semi colon delimited string
          */
         [Benchmark]
-        public void O3_Set_Hash_AllFieldsInKey()
+        public void O3_SetHash_AllFieldsInKey()
         {
             foreach (var item in this.ListForWriting)
             {
