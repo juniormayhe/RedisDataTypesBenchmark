@@ -156,8 +156,8 @@
                     hashEntries.Add(kvp.Key, string.Join(",", kvp.Value));
                     // delimited
                     plainTexts.Add($"{kvp.Key}:{string.Join(",", kvp.Value)}");
-                    this.Cache.SetAddAll(key: $"o4_set:{key}", plainTexts);
                 }
+                this.Cache.SetAddAll(key: $"o4_set:{key}", plainTexts);
                 this.Cache.StringSet(key: $"o1_delimited:{key}", string.Join("|", plainTexts));
                 this.Cache.HashSet(key: $"o3_hash:{key}", hashEntries);
 
