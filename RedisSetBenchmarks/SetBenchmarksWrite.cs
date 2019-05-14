@@ -29,24 +29,26 @@
          * Structure for hashes could be
          * 
          * Key - RequestId_GUID
-         * |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - semi colon delimited string
-         * |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - semi colon delimited string
+         * |__ Value - ProductId:INT|VariantId:GUID|Reason:STRING:Entities
+         * |__ Value - ProductId:INT|VariantId:GUID|Reason:STRING:Entities
+         * 
+         * where both Reason is a string and Entities is a semi colon delimited string
          */
         [Benchmark]
-        public void O3_Set_Hash_RequestIdInKey()
+        public void O4_Set_AddtAll_RequestIdInKey()
         {
             foreach (var item in this.ListForWriting)
             {
-                string key = $"o3_hash:RequestId_{item.RequestId}";
-                IDictionary<string, string> entriesForHash = new Dictionary<string, string>();
+                string key = $"o4_set:RequestId_{item.RequestId}";
+                var entriesForSet = new List<string>();
                 foreach (var removedEntityByReason in item.RemovedEntitiesByReason)
                 {
-                    string productVariantReasonKey = $"{item.GetProductVariantKey()}:Reason_{removedEntityByReason.Key}";
+                    string productVariantReasonKey = $"ProductId_{item.ProductId}|VariantId_{item.VariantId}|Reason_{removedEntityByReason.Key}";
                     string entityIds = string.Join(",", removedEntityByReason.Value);
 
-                    entriesForHash.Add(productVariantReasonKey, entityIds);
+                    entriesForSet.Add($"{productVariantReasonKey}:{entityIds}");
                 }
-                this.Cache.HashSet(key, entriesForHash);
+                this.Cache.SetAddAll(key, entriesForSet);
             }
         }
 
@@ -54,24 +56,26 @@
          * Structure for hashes could be
          * 
          * Key - RequestId_GUID:ProductId:INT
-         * |__ Field - VariantId_GUID:Reason:STRING, Value - semi colon delimited string
-         * |__ Field - VariantId_GUID:Reason:STRING, Value - semi colon delimited string
+         * |__ Value - VariantId:GUID|Reason:STRING:Entities
+         * |__ Value - VariantId:GUID|Reason:STRING:Entities
+         * 
+         * where both Reason is a string and Entities is a semi colon delimited string
          */
         [Benchmark]
-        public void O3_Set_Hash_RequestIdAndProductdInKey()
+        public void O3_Set_AddAll_RequestIdAndProductdInKey()
         {
             foreach (var item in this.ListForWriting)
             {
-                string key = $"o3_hash:RequestId_{item.RequestId}:ProductId_{item.ProductId}";
-                IDictionary<string, string> entriesForHash = new Dictionary<string, string>();
+                string key = $"o4_set:RequestId_{item.RequestId}:ProductId_{item.ProductId}";
+                var entriesForSet = new List<string>();
                 foreach (var removedEntityByReason in item.RemovedEntitiesByReason)
                 {
-                    string variantReasonKey = $"{item.VariantId}:Reason_{removedEntityByReason.Key}";
+                    string variantAndReason = $"VariantId_{item.VariantId}|Reason_{removedEntityByReason.Key}";
                     string entityIds = string.Join(",", removedEntityByReason.Value);
 
-                    entriesForHash.Add(variantReasonKey, entityIds);
+                    entriesForSet.Add($"{variantAndReason}:{entityIds}");
                 }
-                this.Cache.HashSet(key, entriesForHash);
+                this.Cache.SetAddAll(key, entriesForSet);
             }
         }
 
@@ -79,25 +83,27 @@
          * Structure for hashes could be
          * 
          * Key - RequestId_GUID:ProductId_INT:VariantId_GUID
-         * |__ Field - Reason:STRING, Value - semi colon delimited string
-         * |__ Field - Reason:STRING, Value - semi colon delimited string
+         * |__ Value - Reason:Entities
+         * |__ Value - Reason:Entities
+         * 
+         * where both Reason is a string and Entities is a semi colon delimited string
          */
         [Benchmark]
-        public void O3_Set_Hash_AllFieldsInKey()
+        public void O3_Set_AddAll_AllFieldsInKey()
         {
             foreach (var item in this.ListForWriting)
             {
-                string key = $"o3_hash:{item.GetFullKey()}";
-                IDictionary<string, string> entriesForHash = new Dictionary<string, string>();
+                string key = $"o4_set:{item.GetFullKey()}";
+                var entriesForSet = new List<string>();
                 foreach (var removedEntityByReason in item.RemovedEntitiesByReason)
                 {
                     //add fields for Reason and RemovedEntityIds
                     string reasonKey = removedEntityByReason.Key;
                     string entityIds = string.Join(",", removedEntityByReason.Value);
                     
-                    entriesForHash.Add(reasonKey, entityIds);
+                    entriesForSet.Add($"{reasonKey}:{entityIds}");
                 }
-                this.Cache.HashSet(key, entriesForHash);
+                this.Cache.SetAddAll(key, entriesForSet);
             }
         }
     }
