@@ -140,15 +140,15 @@ where both Reason is a string and Entities is a semi colon delimited string
 ```
 |                                  Method |     Mean |    Error |   StdDev | Rank |     Gen 0 |    Gen 1 | Gen 2 | Allocated |
 |---------------------------------------- |---------:|---------:|---------:|-----:|----------:|---------:|------:|----------:|
-|            O3_Set_AddAll_AllFieldsInKey | 91.73 ms | 1.801 ms | 3.058 ms |    1 | 2000.0000 | 500.0000 |     - |   11.8 MB |
-| O3_Set_AddAll_RequestIdAndProductdInKey | 96.54 ms | 1.919 ms | 4.671 ms |    2 | 2400.0000 | 600.0000 |     - |  13.83 MB |
-|           O4_Set_AddtAll_RequestIdInKey | 96.69 ms | 1.933 ms | 2.301 ms |    2 | 2500.0000 | 666.6667 |     - |  14.64 MB |
+|            O3_Set_AddAll_AllFieldsInKey | 94.43 ms | 1.884 ms | 2.641 ms |    1 | 2166.6667 | 500.0000 |     - |   11.8 MB |
+| O3_Set_AddAll_RequestIdAndProductdInKey | 97.06 ms | 1.941 ms | 2.845 ms |    2 | 2333.3333 | 500.0000 |     - |  13.83 MB |
+|           O4_Set_AddtAll_RequestIdInKey | 98.23 ms | 1.934 ms | 4.325 ms |    2 | 2400.0000 | 600.0000 |     - |  14.64 MB |
 
-|                                Method |     Mean |     Error |    StdDev | Rank | Gen 0 | Gen 1 | Gen 2 | Allocated |
-|-------------------------------------- |---------:|----------:|----------:|-----:|------:|------:|------:|----------:|
-| O4_Get_Set_RequestIdAndProductIdInKey | 1.585 ms | 0.0311 ms | 0.0415 ms |    1 |     - |     - |     - |   6.48 KB |
-|             O4_Get_Set_RequestIdInKey | 1.591 ms | 0.0316 ms | 0.0364 ms |    1 |     - |     - |     - |   6.76 KB |
-|             O4_Get_Set_AllFieldsInKey | 1.627 ms | 0.0325 ms | 0.0476 ms |    1 |     - |     - |     - |   5.71 KB |
+|                                Method |    Mean |    Error |   StdDev | Rank |     Gen 0 |     Gen 1 | Gen 2 | Allocated |
+|-------------------------------------- |--------:|---------:|---------:|-----:|----------:|----------:|------:|----------:|
+|             O4_Get_Set_RequestIdInKey | 4.059 s | 0.0763 s | 0.0783 s |    1 | 3000.0000 | 1000.0000 |     - |  18.43 MB |
+| O4_Get_Set_RequestIdAndProductIdInKey | 4.059 s | 0.0736 s | 0.0652 s |    1 | 3000.0000 | 1000.0000 |     - |  17.61 MB |
+|             O4_Get_Set_AllFieldsInKey | 4.102 s | 0.0795 s | 0.1061 s |    1 | 3000.0000 | 1000.0000 |     - |  15.81 MB |
 ```
 
 ## Conclusions
