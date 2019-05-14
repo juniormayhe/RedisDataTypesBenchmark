@@ -94,17 +94,17 @@ Where Entities are semi colon delimited string
 ### 5000 records
 
 ```
-|                                Method |      Mean |    Error |   StdDev | Rank |     Gen 0 |    Gen 1 |    Gen 2 | Allocated |
-|-------------------------------------- |----------:|---------:|---------:|-----:|----------:|---------:|---------:|----------:|
-|            O3_Set_Hash_AllFieldsInKey |  76.19 ms | 1.508 ms | 3.466 ms |    1 | 2285.7143 | 428.5714 |        - |  13.98 MB |
-| O3_Set_Hash_RequestIdAndProductdInKey |  85.75 ms | 1.700 ms | 4.538 ms |    2 | 2500.0000 | 500.0000 |        - |  14.81 MB |
-|            O3_Set_Hash_RequestIdInKey | 100.03 ms | 2.143 ms | 6.008 ms |    3 | 3000.0000 | 833.3333 | 166.6667 |  16.93 MB |
+|                               Method |     Mean |    Error |    StdDev |   Median | Rank |     Gen 0 |    Gen 1 |    Gen 2 | Allocated |
+|------------------------------------- |---------:|---------:|----------:|---------:|-----:|----------:|---------:|---------:|----------:|
+|            O3_SetHash_AllFieldsInKey | 77.59 ms | 2.288 ms |  6.565 ms | 76.01 ms |    1 | 2500.0000 | 625.0000 | 125.0000 |     14 MB |
+| O2_SetHash_RequestIdAndProductdInKey | 90.45 ms | 4.070 ms | 11.413 ms | 87.26 ms |    2 | 2428.5714 | 571.4286 |        - |  14.82 MB |
+|            O1_SetHash_RequestIdInKey | 92.71 ms | 2.483 ms |  7.043 ms | 92.02 ms |    3 | 2800.0000 | 600.0000 |        - |  16.92 MB |
 
 |                                 Method |    Mean |    Error |   StdDev | Rank |     Gen 0 |     Gen 1 | Gen 2 | Allocated |
 |--------------------------------------- |--------:|---------:|---------:|-----:|----------:|----------:|------:|----------:|
-|             O3_Get_Hash_AllFieldsInKey | 4.505 s | 0.0865 s | 0.1094 s |    1 | 2000.0000 | 1000.0000 |     - |  10.21 MB |
-| O3_Get_Hash_RequestIdAndProductIdInKey | 4.548 s | 0.0905 s | 0.0968 s |    1 | 2000.0000 | 1000.0000 |     - |   9.59 MB |
-|             O3_Get_Hash_RequestIdInKey | 4.832 s | 0.0939 s | 0.1286 s |    2 | 3000.0000 | 1000.0000 |     - |  10.12 MB |
+|             O1_ReadHash_RequestIdInKey | 4.203 s | 0.0828 s | 0.1472 s |    1 | 3000.0000 | 1000.0000 |     - |  10.12 MB |
+|             O3_ReadHash_AllFieldsInKey | 4.236 s | 0.0845 s | 0.2240 s |    1 | 2000.0000 | 1000.0000 |     - |  10.21 MB |
+| O2_ReadHash_RequestIdAndProductIdInKey | 4.263 s | 0.0827 s | 0.1312 s |    1 | 2000.0000 | 1000.0000 |     - |   9.59 MB |
 ```
 
 ## Narrowing observation of using hashes
@@ -151,12 +151,13 @@ where both Reason is a string and Entities is a semi colon delimited string
 |             O1_ReadSet_RequestIdInKey | 4.199 s | 0.0759 s | 0.1309 s |    1 | 3000.0000 | 1000.0000 |     - |  18.43 MB |
 | O2_ReadSet_RequestIdAndProductIdInKey | 4.246 s | 0.0846 s | 0.0869 s |    1 | 3000.0000 | 1000.0000 |     - |  17.62 MB |
 |             O3_ReadSet_AllFieldsInKey | 4.256 s | 0.0838 s | 0.0897 s |    1 | 3000.0000 | 1000.0000 |     - |  15.81 MB |
+
 ```
 
 ## Conclusions
 
 - Reading cache have similar performance and datatype won't impact so much, but the best memory allocations are Hashes and Sets.
-- Saving cache as Hash and Sets datatypes seem faster than other approaches. 
+- Saving cache as Hash and Sets datatypes seems faster than other approaches. 
 - Memory allocations are lower with Sets, Delimited Text and Hashes.
 
 ## Useful links
