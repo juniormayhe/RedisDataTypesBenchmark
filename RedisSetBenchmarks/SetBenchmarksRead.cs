@@ -34,8 +34,10 @@
          * Structure for hashes could be
          * 
          * Key - RequestId_GUID
-         * |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - semi colon delimited string
-         * |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - semi colon delimited string
+         * |__ Value - ProductId:INT|VariantId:GUID|Reason:STRING:Entities
+         * |__ Value - ProductId:INT|VariantId:GUID|Reason:STRING:Entities
+         * 
+         * where both Reason is a string and Entities is a semi colon delimited string
          */
         [Benchmark]
         public void O4_Get_Set_RequestIdInKey()
@@ -45,16 +47,16 @@
             {
                 string key = $"o4_set:RequestId_{item.RequestId}";
 
-                IDictionary<string, string> values = Cache.SetGet(key);
+                IEnumerable<string> values = Cache.SetGet(key);
 
                 List<string> items = new List<string>();
-                foreach (var kvp in values)
+                foreach (string value in values)
                 {
-                    string productAndVariantAndReason = kvp.Key;
-                    string reasonAndRemovedEntities = kvp.Value;
-                    items.Add($"{productAndVariantAndReason}:{reasonAndRemovedEntities}");
+                    string[] v = value.Split(":");
+                    string productVariantAndReason = v[0];
+                    string[] removedEntities = v[1].Split(",");
+                    reasons.Add(productVariantAndReason, removedEntities);
                 }
-
                 reasons.Add(key, items);
             }
         }
@@ -131,7 +133,7 @@
                 var entriesForSet = new List<string>();
                 foreach (var removedEntityByReason in item.RemovedEntitiesByReason)
                 {
-                    string productVariantReasonKey = $"{item.GetProductVariantKey()}|Reason_{removedEntityByReason.Key}";
+                    string productVariantReasonKey = $"ProductId_{item.ProductId}|VariantId_{item.VariantId}|Reason_{removedEntityByReason.Key}";
                     string entityIds = string.Join(",", removedEntityByReason.Value);
 
                     entriesForSet.Add($"{productVariantReasonKey}:{entityIds}");
