@@ -1,6 +1,6 @@
 # RedisDataTypesBenchmark
 
-## Results for running all togheter
+## Results for running all datatypes tests
 
 In REDIS host, there are some peaks of CPU usage with an average of 64% while writing with Hash and Sets.
 
@@ -15,7 +15,7 @@ Cached data schema:
 - field is regular string
 - value is either delimited text or JSON (4 random numbers)
 
-## 1000 records
+### 1000 records
 
 ```
 BenchmarkDotNet=v0.11.5, OS=Windows 10.0.17763.475 (1809/October2018Update/Redstone5)
@@ -32,9 +32,7 @@ Intel Core i7-3632QM CPU 2.20GHz (Ivy Bridge), 1 CPU, 8 logical and 4 physical c
 |     O1_Set_Delimited | 1,006.11 ms | 10.8458 ms | 10.145 ms |    3 |         - |        - |     - |   2.44 MB | <-- lower alloc
 | O2_Set_JilJsonString | 1,019.29 ms | 13.0463 ms | 10.894 ms |    3 | 1000.0000 |        - |     - |    4.4 MB |
 |    O2_Set_JsonString | 1,029.41 ms | 19.6352 ms | 19.284 ms |    3 | 1000.0000 |        - |     - |   4.96 MB |
-```
 
-```
 |               Method |    Mean |    Error |   StdDev |  Median | Rank |     Gen 0 | Gen 1 | Gen 2 | Allocated |
 |--------------------- |--------:|---------:|---------:|--------:|-----:|----------:|------:|------:|----------:|
 |          O4_Get_Sets | 1.006 s | 0.0119 s | 0.0105 s | 1.002 s |    1 | 1000.0000 |     - |     - |   3.03 MB | <-- lower alloc
@@ -45,7 +43,7 @@ Intel Core i7-3632QM CPU 2.20GHz (Ivy Bridge), 1 CPU, 8 logical and 4 physical c
 |    O2_Get_JsonString | 1.034 s | 0.0137 s | 0.0128 s | 1.032 s |    1 | 3000.0000 |     - |     - |   9.91 MB |
 ```
 
-## 5000 records
+### 5000 records
 
 ```
 |               Method |       Mean |     Error |    StdDev | Rank |     Gen 0 |    Gen 1 | Gen 2 | Allocated |
@@ -56,9 +54,7 @@ Intel Core i7-3632QM CPU 2.20GHz (Ivy Bridge), 1 CPU, 8 logical and 4 physical c
 | O2_Set_NetJsonString | 5,088.1 ms | 67.037 ms | 62.707 ms |    3 | 5000.0000 |        - |     - |  17.89 MB |
 | O2_Set_JilJsonString | 5,088.8 ms | 50.550 ms | 47.284 ms |    3 | 7000.0000 |        - |     - |  22.05 MB |
 |    O2_Set_JsonString | 5,151.9 ms | 48.104 ms | 42.643 ms |    3 | 8000.0000 |        - |     - |  24.81 MB |
-```
 
-```
 |               Method |    Mean |    Error |   StdDev | Rank |      Gen 0 | Gen 1 | Gen 2 | Allocated |
 |--------------------- |--------:|---------:|---------:|-----:|-----------:|------:|------:|----------:|
 |     O1_Get_Delimited | 5.008 s | 0.0373 s | 0.0349 s |    1 |  6000.0000 |     - |     - |  19.19 MB | <-- lower alloc
@@ -69,6 +65,21 @@ Intel Core i7-3632QM CPU 2.20GHz (Ivy Bridge), 1 CPU, 8 logical and 4 physical c
 |          O4_Get_Sets | 5.118 s | 0.1012 s | 0.0994 s |    1 |  5000.0000 |     - |     - |   15.2 MB | <-- lower alloc
 ```
 
+## Narrowing approach of using hashes
+
+### 5000 records
+
+```
+|                     Method |      Mean |    Error |   StdDev | Rank |     Gen 0 |    Gen 1 |    Gen 2 | Allocated |
+|--------------------------- |----------:|---------:|---------:|-----:|----------:|---------:|---------:|----------:|
+| O3_Set_Hash_AllFieldsInKey |  75.75 ms | 1.507 ms | 3.610 ms |    1 | 2428.5714 | 714.2857 | 142.8571 |  14.01 MB |
+|                O3_Set_Hash | 100.41 ms | 2.566 ms | 7.443 ms |    2 | 2833.3333 | 666.6667 |        - |  16.93 MB |
+
+|                     Method |    Mean |    Error |   StdDev | Rank |     Gen 0 |     Gen 1 | Gen 2 | Allocated |
+|--------------------------- |--------:|---------:|---------:|-----:|----------:|----------:|------:|----------:|
+| O3_Get_Hash_AllFieldsInKey | 4.485 s | 0.0994 s | 0.1021 s |    1 | 2000.0000 | 1000.0000 |     - |  10.21 MB |
+|                O3_Get_Hash | 4.517 s | 0.0888 s | 0.1273 s |    1 | 3000.0000 | 1000.0000 |     - |  10.12 MB |
+```
 ## Conclusions
 
 - Reading cache have similar performance and datatype won't impact so much, but the best memory allocations are Hashes and Sets.

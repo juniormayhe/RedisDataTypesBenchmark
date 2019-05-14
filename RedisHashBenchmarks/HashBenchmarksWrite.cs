@@ -22,7 +22,7 @@
         {
             this.Cache = CacheHelper.GetCacheStore();
 
-            this.ListForWriting = Seed.BuildReasons(totalKeys: 4, totalReasons: 2, totalRemovedEntities: 4);
+            this.ListForWriting = Seed.BuildReasons(totalKeys: 5000, totalReasons: 2, totalRemovedEntities: 4);
         }
 
         /**
