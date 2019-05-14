@@ -65,9 +65,9 @@ Intel Core i7-3632QM CPU 2.20GHz (Ivy Bridge), 1 CPU, 8 logical and 4 physical c
 |          O4_Get_Sets | 5.118 s | 0.1012 s | 0.0994 s |    1 |  5000.0000 |     - |     - |   15.2 MB | <-- lower alloc
 ```
 
-## Narrowing approach of using hashes
+## Narrowing observation of using hashes
 
-Evaluating Hash value arrangements:
+Evaluated Hash value arrangements:
 
 RequestIdInKey
 ```
@@ -104,8 +104,61 @@ AllFieldsInKey
 | O3_Get_Hash_RequestIdAndProductIdInKey | 4.548 s | 0.0905 s | 0.0968 s |    1 | 2000.0000 | 1000.0000 |     - |   9.59 MB |
 |             O3_Get_Hash_RequestIdInKey | 4.832 s | 0.0939 s | 0.1286 s |    2 | 3000.0000 | 1000.0000 |     - |  10.12 MB |
 ```
+
+## Narrowing observation of using hashes
+
+Evaluated Hash value arrangements:
+
+RequestIdInKey
+```
+ Key - RequestId_GUID
+ |__ Value - ProductId:INT|VariantId:GUID|Reason:STRING:Entities
+ |__ Value - ProductId:INT|VariantId:GUID|Reason:STRING:Entities
+```
+where both Reason is a string and Entities is a semi colon delimited string
+ 
+
+RequestIdAndProductdInKey
+```
+ Key - RequestId_GUID:ProductId:INT
+ |__ Value - VariantId:GUID|Reason:STRING:Entities
+ |__ Value - VariantId:GUID|Reason:STRING:Entities
+```
+where both Reason is a string and Entities is a semi colon delimited string
+
+
+AllFieldsInKey
+```
+  Key - RequestId_GUID:ProductId_INT:VariantId_GUID
+ |__ Value - Reason:Entities
+ |__ Value - Reason:Entities
+```
+where both Reason is a string and Entities is a semi colon delimited string
+
+### 5000 records
+
+```
+|                                  Method |     Mean |    Error |   StdDev | Rank |     Gen 0 |    Gen 1 | Gen 2 | Allocated |
+|---------------------------------------- |---------:|---------:|---------:|-----:|----------:|---------:|------:|----------:|
+|            O3_Set_AddAll_AllFieldsInKey | 91.73 ms | 1.801 ms | 3.058 ms |    1 | 2000.0000 | 500.0000 |     - |   11.8 MB |
+| O3_Set_AddAll_RequestIdAndProductdInKey | 96.54 ms | 1.919 ms | 4.671 ms |    2 | 2400.0000 | 600.0000 |     - |  13.83 MB |
+|           O4_Set_AddtAll_RequestIdInKey | 96.69 ms | 1.933 ms | 2.301 ms |    2 | 2500.0000 | 666.6667 |     - |  14.64 MB |
+
+|                                Method |     Mean |     Error |    StdDev | Rank | Gen 0 | Gen 1 | Gen 2 | Allocated |
+|-------------------------------------- |---------:|----------:|----------:|-----:|------:|------:|------:|----------:|
+| O4_Get_Set_RequestIdAndProductIdInKey | 1.585 ms | 0.0311 ms | 0.0415 ms |    1 |     - |     - |     - |   6.48 KB |
+|             O4_Get_Set_RequestIdInKey | 1.591 ms | 0.0316 ms | 0.0364 ms |    1 |     - |     - |     - |   6.76 KB |
+|             O4_Get_Set_AllFieldsInKey | 1.627 ms | 0.0325 ms | 0.0476 ms |    1 |     - |     - |     - |   5.71 KB |
+```
+
 ## Conclusions
 
 - Reading cache have similar performance and datatype won't impact so much, but the best memory allocations are Hashes and Sets.
 - Saving cache as Hash and Sets datatypes seem faster than other approaches. 
 - Memory allocations are lower with Sets, Delimited Text and Hashes.
+
+## Useful links
+[REDIS memory footprint](https://redis.io/topics/faq)
+[Expensive commands in REDIS](https://docs.microsoft.com/en-us/azure/azure-cache-for-redis/cache-how-to-troubleshoot#expensive-commands)
+[Rules about REDIS keys](https://redis.io/topics/data-types-intro)
+[Benchmarking REDIS server](https://redis.io/topics/benchmarks)
