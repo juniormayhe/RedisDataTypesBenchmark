@@ -27,23 +27,24 @@
             this.ListForReading = Seed.BuildReasons(totalKeys: 5000, totalReasons: 2, totalRemovedEntities: 4);
             this.WarmUpCacheForReadingWithRequestIdAsKey();
             this.WarmUpCacheForReadingWithAllFieldsAsKey();
+            this.WarmUpCacheForReadingWithRequestIdAndProductIdAsKey();
         }
 
         /**
          * Structure for hashes could be
          * 
-         * Key - RequestId
+         * Key - RequestId_GUID
          * |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - semi colon delimited string
          * |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - semi colon delimited string
          */
         [Benchmark]
-        public void O3_Get_Hash()
+        public void O3_Get_Hash_RequestIdInKey()
         {
             var reasons = new Dictionary<string, IEnumerable<string>>();
             foreach (var item in ListForReading)
             {
                 string key = $"o3_hash:RequestId_{item.RequestId}";
-                
+
                 IDictionary<string, string> values = Cache.HashGet(key);
 
                 List<string> items = new List<string>();
@@ -60,7 +61,35 @@
         /**
          * Structure for hashes could be
          * 
-         * Key - RequestId:ProductId:INT_VariantId:GUID
+         * Key - RequestId_GUID:ProductId:INT
+         * |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - semi colon delimited string
+         * |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - semi colon delimited string
+         */
+        [Benchmark]
+        public void O3_Get_Hash_RequestIdAndProductIdInKey()
+        {
+            var reasons = new Dictionary<string, IEnumerable<string>>();
+            foreach (var item in ListForReading)
+            {
+                string key = $"o3_hash:RequestId_{item.RequestId}:ProductId_{item.ProductId}";
+
+                IDictionary<string, string> values = Cache.HashGet(key);
+
+                List<string> items = new List<string>();
+                foreach (var kvp in values)
+                {
+                    string variantAndReason = kvp.Key;
+                    string reasonAndRemovedEntities = kvp.Value;
+                    items.Add($"{variantAndReason}:{reasonAndRemovedEntities}");
+                }
+                reasons.Add(key, items);
+            }
+        }
+
+        /**
+         * Structure for hashes could be
+         * 
+         * Key - RequestId_GUID:ProductId_INT:VariantId_GUID
          * |__ Field - Reason:STRING, Value - semi colon delimited string
          * |__ Field - Reason:STRING, Value - semi colon delimited string
          */
@@ -71,7 +100,7 @@
             foreach (var item in this.ListForReading)
             {
                 string key = $"o3_hash:{item.GetFullKey()}";
-                
+
                 IDictionary<string, string> values = this.Cache.HashGet(key);
 
                 List<string> items = new List<string>();
@@ -101,7 +130,27 @@
 
                     entriesForHash.Add(productVariantReasonKey, entityIds);
                 }
-                
+
+                this.Cache.HashSet(key, entriesForHash);
+            }
+        }
+
+        private void WarmUpCacheForReadingWithRequestIdAndProductIdAsKey()
+        {
+            foreach (var item in this.ListForReading)
+            {
+                string key = $"o3_hash:RequestId_{item.RequestId}:ProductId_{item.ProductId}";
+
+                var entriesForHash = new Dictionary<string, string>();
+
+                foreach (var removedEntityByReason in item.RemovedEntitiesByReason)
+                {
+                    string productVariantReasonKey = $"{item.VariantId}:Reason_{removedEntityByReason.Key}";
+                    string entityIds = string.Join(",", removedEntityByReason.Value);
+
+                    entriesForHash.Add(productVariantReasonKey, entityIds);
+                }
+
                 this.Cache.HashSet(key, entriesForHash);
             }
         }

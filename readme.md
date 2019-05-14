@@ -67,18 +67,42 @@ Intel Core i7-3632QM CPU 2.20GHz (Ivy Bridge), 1 CPU, 8 logical and 4 physical c
 
 ## Narrowing approach of using hashes
 
+Structures compared
+
+O3_Get_Hash_RequestIdInKey
+```
+ Key - RequestId_GUID
+ |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - semi colon delimited string
+ |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - semi colon delimited string
+```
+
+O3_Get_Hash_RequestIdAndProductIdInKey
+```
+ Key - RequestId_GUID:ProductId:INT
+ |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - semi colon delimited string
+ |__ Field - ProductId:INT_VariantId:GUID_Reason:STRING, Value - semi colon delimited string
+```
+O3_Get_Hash_AllFieldsInKey
+```
+ Key - RequestId_GUID:ProductId_INT:VariantId_GUID
+ |__ Field - Reason:STRING, Value - semi colon delimited string
+ |__ Field - Reason:STRING, Value - semi colon delimited string
+```
+
 ### 5000 records
 
 ```
-|                     Method |      Mean |    Error |   StdDev | Rank |     Gen 0 |    Gen 1 |    Gen 2 | Allocated |
-|--------------------------- |----------:|---------:|---------:|-----:|----------:|---------:|---------:|----------:|
-| O3_Set_Hash_AllFieldsInKey |  75.75 ms | 1.507 ms | 3.610 ms |    1 | 2428.5714 | 714.2857 | 142.8571 |  14.01 MB |
-|                O3_Set_Hash | 100.41 ms | 2.566 ms | 7.443 ms |    2 | 2833.3333 | 666.6667 |        - |  16.93 MB |
+|                                Method |      Mean |    Error |   StdDev | Rank |     Gen 0 |    Gen 1 |    Gen 2 | Allocated |
+|-------------------------------------- |----------:|---------:|---------:|-----:|----------:|---------:|---------:|----------:|
+|            O3_Set_Hash_AllFieldsInKey |  76.19 ms | 1.508 ms | 3.466 ms |    1 | 2285.7143 | 428.5714 |        - |  13.98 MB |
+| O3_Set_Hash_RequestIdAndProductdInKey |  85.75 ms | 1.700 ms | 4.538 ms |    2 | 2500.0000 | 500.0000 |        - |  14.81 MB |
+|            O3_Set_Hash_RequestIdInKey | 100.03 ms | 2.143 ms | 6.008 ms |    3 | 3000.0000 | 833.3333 | 166.6667 |  16.93 MB |
+
 
 |                     Method |    Mean |    Error |   StdDev | Rank |     Gen 0 |     Gen 1 | Gen 2 | Allocated |
 |--------------------------- |--------:|---------:|---------:|-----:|----------:|----------:|------:|----------:|
 | O3_Get_Hash_AllFieldsInKey | 4.485 s | 0.0994 s | 0.1021 s |    1 | 2000.0000 | 1000.0000 |     - |  10.21 MB |
-|                O3_Get_Hash | 4.517 s | 0.0888 s | 0.1273 s |    1 | 3000.0000 | 1000.0000 |     - |  10.12 MB |
+| O3_Get_Hash_RequestIdInKey | 4.517 s | 0.0888 s | 0.1273 s |    1 | 3000.0000 | 1000.0000 |     - |  10.12 MB |
 ```
 ## Conclusions
 
