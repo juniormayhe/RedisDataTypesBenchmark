@@ -15,7 +15,7 @@
 
             Console.WriteLine("Starting application");
 
-            var writeSummary = BenchmarkRunner.Run<SetBenchmarksWrite>();
+            //var writeSummary = BenchmarkRunner.Run<SetBenchmarksWrite>();
             var readSummary = BenchmarkRunner.Run<SetBenchmarksRead>();
 
             // clean up data

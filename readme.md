@@ -91,7 +91,7 @@ AllFieldsInKey
 
 Where Entities are semi colon delimited string
 
-### 5000 records
+### 5000 records on local REDIS
 
 ```
 |                               Method |     Mean |    Error |    StdDev |   Median | Rank |     Gen 0 |    Gen 1 |    Gen 2 | Allocated |
@@ -109,17 +109,17 @@ Where Entities are semi colon delimited string
 
 ### 5000 records with remote REDIS (with network latency)
 ```
-|                               Method |     Mean |    Error |   StdDev | Rank |     Gen 0 |     Gen 1 | Gen 2 | Allocated |
-|------------------------------------- |---------:|---------:|---------:|-----:|----------:|----------:|------:|----------:|
-| O2_SetHash_RequestIdAndProductdInKey | 215.5 ms | 21.47 ms | 62.63 ms |    1 | 3666.6667 | 1000.0000 |     - |  14.85 MB |
-|            O1_SetHash_RequestIdInKey | 242.3 ms | 26.73 ms | 77.14 ms |    2 | 3000.0000 | 1000.0000 |     - |  16.94 MB |
-|            O3_SetHash_AllFieldsInKey | 254.3 ms | 26.28 ms | 75.41 ms |    2 | 2333.3333 |  333.3333 |     - |  14.01 MB |
+|                               Method |     Mean |     Error |   StdDev | Rank |     Gen 0 |    Gen 1 |    Gen 2 | Allocated |
+|------------------------------------- |---------:|----------:|---------:|-----:|----------:|---------:|---------:|----------:|
+|            O3_SetHash_AllFieldsInKey | 48.60 ms | 0.9857 ms | 2.764 ms |    1 | 2300.0000 | 900.0000 |        - |  13.98 MB |
+| O2_SetHash_RequestIdAndProductdInKey | 56.03 ms | 1.3944 ms | 4.023 ms |    2 | 2625.0000 | 750.0000 | 125.0000 |  14.81 MB |
+|            O1_SetHash_RequestIdInKey | 59.35 ms | 1.2333 ms | 2.628 ms |    3 | 2888.8889 | 888.8889 | 111.1111 |  16.91 MB |
 
 |                                 Method |    Mean |    Error |   StdDev | Rank |     Gen 0 |     Gen 1 | Gen 2 | Allocated |
 |--------------------------------------- |--------:|---------:|---------:|-----:|----------:|----------:|------:|----------:|
-|             O3_ReadHash_AllFieldsInKey | 218.6 s | 0.5787 s | 0.5413 s |    1 | 3000.0000 | 1000.0000 |     - |  10.21 MB |
-| O2_ReadHash_RequestIdAndProductIdInKey | 218.9 s | 0.3376 s | 0.3158 s |    1 | 2000.0000 | 1000.0000 |     - |   9.59 MB |
-|             O1_ReadHash_RequestIdInKey | 220.9 s | 1.1879 s | 1.0531 s |    1 | 3000.0000 | 1000.0000 |     - |  10.12 MB |
+|             O1_ReadHash_RequestIdInKey | 6.589 s | 0.2001 s | 0.5837 s |    1 | 3000.0000 | 1000.0000 |     - |  10.12 MB |
+|             O3_ReadHash_AllFieldsInKey | 6.642 s | 0.2005 s | 0.5849 s |    1 | 2000.0000 | 1000.0000 |     - |  10.21 MB |
+| O2_ReadHash_RequestIdAndProductIdInKey | 7.039 s | 0.2700 s | 0.7960 s |    2 | 2000.0000 | 1000.0000 |     - |   9.59 MB |
 ```
 
 ## Narrowing observation of using hashes
@@ -152,7 +152,7 @@ AllFieldsInKey
 ```
 where both Reason is a string and Entities is a semi colon delimited string
 
-### 5000 records
+### 5000 records on local REDIS
 
 ```
 |                                 Method |     Mean |    Error |   StdDev | Rank |     Gen 0 |    Gen 1 | Gen 2 | Allocated |
@@ -166,6 +166,21 @@ where both Reason is a string and Entities is a semi colon delimited string
 |             O1_ReadSet_RequestIdInKey | 4.199 s | 0.0759 s | 0.1309 s |    1 | 3000.0000 | 1000.0000 |     - |  18.43 MB |
 | O2_ReadSet_RequestIdAndProductIdInKey | 4.246 s | 0.0846 s | 0.0869 s |    1 | 3000.0000 | 1000.0000 |     - |  17.62 MB |
 |             O3_ReadSet_AllFieldsInKey | 4.256 s | 0.0838 s | 0.0897 s |    1 | 3000.0000 | 1000.0000 |     - |  15.81 MB |
+```
+
+### 5000 records with remote REDIS (with network latency)
+```
+|                                 Method |     Mean |    Error |   StdDev | Rank |     Gen 0 |    Gen 1 |    Gen 2 | Allocated |
+|--------------------------------------- |---------:|---------:|---------:|-----:|----------:|---------:|---------:|----------:|
+|            O3_SetAddAll_AllFieldsInKey | 56.94 ms | 1.764 ms | 5.060 ms |    1 | 2000.0000 | 555.5556 |        - |  11.77 MB |
+| O2_SetAddAll_RequestIdAndProductdInKey | 67.74 ms | 2.321 ms | 6.585 ms |    2 | 2444.4444 | 666.6667 | 111.1111 |   13.8 MB |
+|            O1_SetAddAll_RequestIdInKey | 70.23 ms | 2.420 ms | 7.020 ms |    3 | 2555.5556 | 777.7778 | 111.1111 |   14.6 MB |
+
+|                                Method |    Mean |    Error |   StdDev | Rank |     Gen 0 |     Gen 1 | Gen 2 | Allocated |
+|-------------------------------------- |--------:|---------:|---------:|-----:|----------:|----------:|------:|----------:|
+|             O3_ReadSet_AllFieldsInKey | 6.773 s | 0.1866 s | 0.5109 s |    1 | 4000.0000 | 1000.0000 |     - |  15.81 MB |
+| O2_ReadSet_RequestIdAndProductIdInKey | 6.919 s | 0.2076 s | 0.5991 s |    1 | 4000.0000 | 1000.0000 |     - |  17.61 MB |
+|             O1_ReadSet_RequestIdInKey | 7.523 s | 0.2643 s | 0.7411 s |    2 | 4000.0000 | 1000.0000 |     - |  18.43 MB |
 ```
 
 ## Conclusions
