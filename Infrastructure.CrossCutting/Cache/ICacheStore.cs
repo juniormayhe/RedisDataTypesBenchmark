@@ -18,7 +18,7 @@
 
         Task<string> StringGetAsync(string key);
 
-        Task SetAsync(string key, string value, TimeSpan? expiredIn = null);
+        Task StringSetAsync(string key, string value, TimeSpan? expiredIn = null);
 
         Task<T> GetJsonAsync<T>(string key);
 
@@ -26,16 +26,26 @@
 
         Task RemoveAsync(string key);
 
-        void HashSet(string key, IDictionary<string, string> values);
+        void Truncate(string[] patterns);
+
+        #region hashes
+
+        void HashSet(string key, IDictionary<string, string> values, TimeSpan? expiredIn = null);
+
+        void HashSetAsync(string key, IDictionary<string, string> values, TimeSpan? expiredIn = null);
 
         IDictionary<string, string> HashGet(string key);
 
-        Task<IDictionary<string,string>> HashGetAsync(string key);
+        Task<IDictionary<string, string>> HashGetAsync(string key);
+        #endregion
 
-        void SetAddAll(string key, IEnumerable<string> values);
-        Task<IEnumerable<string>> SetGetAsync(string key);
-        IEnumerable<string> SetGet(string key);
+        #region sets
 
-        void Truncate(string[] patterns);
+        void SetAddAll(string key, IEnumerable<string> values, TimeSpan? expiredIn = null);
+        void SetAddAllAsync(string key, IEnumerable<string> values, TimeSpan? expiredIn = null);
+        Task<IEnumerable<string>> SetGetAllAsync(string key);
+        IEnumerable<string> SetGetAll(string key);
+
+        #endregion
     }
 }

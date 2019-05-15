@@ -85,7 +85,7 @@
             return default(T);
         }
 
-        void ICacheStore.JsonSet<T>(string key, T value, TimeSpan? expiry = default(TimeSpan?))
+        void ICacheStore.JsonSet<T>(string key, T value, TimeSpan? expiry = default)
         {
             try
             {
@@ -107,95 +107,6 @@
             }
         }
 
-        void ICacheStore.HashSet(string key, IDictionary<string, string> values)
-        {
-            try
-            {
-                var entries = values.Select(kvp => new HashEntry(kvp.Key, kvp.Value)).ToArray();
-                //Redis does not provides direct ability to set expiration on individual keys inside hashset. 
-                this.database.HashSet(key, entries.ToArray(), CommandFlags.FireAndForget);
-            }
-            catch (Exception ex)
-            {
-            }
-        }
-
-        IDictionary<string, string> ICacheStore.HashGet(string key)
-        {
-            IDictionary<string, string> values = null;
-
-            try
-            {
-                HashEntry[] entries = this.database.HashGetAll(key);
-                values = entries.ToDictionary(p => p.Name.ToString(), p => p.Value.ToString());
-            }
-            catch (Exception ex)
-            {
-            }
-            return values;
-        }
-
-        async Task<IDictionary<string, string>> ICacheStore.HashGetAsync(string key)
-        {
-            IDictionary<string, string> values = null;
-
-            try
-            {
-                HashEntry[] entries = await this.database.HashGetAllAsync(key).ConfigureAwait(false);
-                values = entries.ToDictionary(p => p.Name.ToString(), p => p.Value.ToString());
-            }
-            catch (Exception ex)
-            {
-            }
-            return values;
-        }
-
-        void ICacheStore.SetAddAll(string key, IEnumerable<string> values)
-        {
-            try
-            {
-                foreach (var value in values)
-                {
-                    this.database.SetAdd(key, (RedisValue)value, CommandFlags.FireAndForget);
-                }
-            }
-            catch (Exception ex)
-            {
-            }
-        }
-
-        IEnumerable<string> ICacheStore.SetGet(string key)
-        {
-            IEnumerable<string> result = null;
-            try
-            {
-                result = this.database.SetMembers(key, CommandFlags.PreferSlave)
-                    .Select(x=> x.ToString());
-            }
-            catch (Exception ex)
-            {
-                throw new ArgumentException(key);
-            }
-
-            return result;
-        }
-
-        async Task<IEnumerable<string>> ICacheStore.SetGetAsync(string key)
-        {
-            IEnumerable<string> result = null;
-            try
-            {
-                var t = await this.database.SetMembersAsync(key, CommandFlags.PreferSlave)
-                    .ConfigureAwait(false);
-                result = t.Select(x => x.ToString());
-            }
-            catch (Exception ex)
-            {
-                throw new ArgumentException(key);
-            }
-
-            return result;
-        }
 
         string ICacheStore.StringGet(string key)
         {
@@ -239,7 +150,7 @@
             return result;
         }
 
-        async Task ICacheStore.SetAsync(string key, string value, TimeSpan? expiredIn)
+        async Task ICacheStore.StringSetAsync(string key, string value, TimeSpan? expiredIn)
         {
             try
             {
@@ -263,5 +174,138 @@
                 }
             }
         }
+
+        #region hashes
+        void ICacheStore.HashSet(string key, IDictionary<string, string> values, TimeSpan? expiredIn = null)
+        {
+            try
+            {
+                var entries = values.Select(kvp => new HashEntry(kvp.Key, kvp.Value)).ToArray();
+                //Redis does not provides direct ability to set expiration on individual keys inside hashset. 
+                this.database.HashSet(key, entries.ToArray(), CommandFlags.FireAndForget);
+                if (expiredIn != null)
+                {
+                    this.database.KeyExpire(key, expiredIn);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        async void ICacheStore.HashSetAsync(string key, IDictionary<string, string> values, TimeSpan? expiredIn = null)
+        {
+            try
+            {
+                var entries = values.Select(kvp => new HashEntry(kvp.Key, kvp.Value)).ToArray();
+                //Redis does not provides direct ability to set expiration on individual keys inside hashset. 
+                await this.database.HashSetAsync(key, entries.ToArray(), CommandFlags.FireAndForget).ConfigureAwait(false);
+                if (expiredIn != null)
+                {
+                    await this.database.KeyExpireAsync(key, expiredIn).ConfigureAwait(false);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        IDictionary<string, string> ICacheStore.HashGet(string key)
+        {
+            IDictionary<string, string> values = null;
+
+            try
+            {
+                HashEntry[] entries = this.database.HashGetAll(key);
+                values = entries.ToDictionary(p => p.Name.ToString(), p => p.Value.ToString());
+            }
+            catch (Exception ex)
+            {
+            }
+            return values;
+        }
+
+        async Task<IDictionary<string, string>> ICacheStore.HashGetAsync(string key)
+        {
+            IDictionary<string, string> values = null;
+
+            try
+            {
+                HashEntry[] entries = await this.database.HashGetAllAsync(key).ConfigureAwait(false);
+                values = entries.ToDictionary(p => p.Name.ToString(), p => p.Value.ToString());
+            }
+            catch (Exception ex)
+            {
+            }
+            return values;
+        }
+
+        #endregion
+
+        #region sets
+        void ICacheStore.SetAddAll(string key, IEnumerable<string> values, TimeSpan? expiredIn = default)
+        {
+            try
+            {
+                foreach (var value in values)
+                {
+                    this.database.SetAdd(key, (RedisValue)value, CommandFlags.FireAndForget);
+                    this.database.KeyExpire(key, expiredIn);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        async void ICacheStore.SetAddAllAsync(string key, IEnumerable<string> values, TimeSpan? expiredIn = default)
+        {
+            try
+            {
+                foreach (var value in values)
+                {
+                    await this.database.SetAddAsync(key, (RedisValue)value, CommandFlags.FireAndForget).ConfigureAwait(false);
+                    await this.database.KeyExpireAsync(key, expiredIn, CommandFlags.FireAndForget).ConfigureAwait(false);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        IEnumerable<string> ICacheStore.SetGetAll(string key)
+        {
+            IEnumerable<string> result = null;
+            try
+            {
+                result = this.database.SetMembers(key, CommandFlags.PreferSlave)
+                    .Select(x => x.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(key);
+            }
+
+            return result;
+        }
+
+        async Task<IEnumerable<string>> ICacheStore.SetGetAllAsync(string key)
+        {
+            IEnumerable<string> result = null;
+            try
+            {
+                var t = await this.database.SetMembersAsync(key, CommandFlags.PreferSlave)
+                    .ConfigureAwait(false);
+                result = t.Select(x => x.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(key);
+            }
+
+            return result;
+        }
+
+        #endregion
     }
 }

@@ -129,7 +129,7 @@
             {
                 string key = $"o4_set:{item.GetFullKey()}";
 
-                IEnumerable<string> rows = this.Cache.SetGet(key);
+                IEnumerable<string> rows = this.Cache.SetGetAll(key);
                 var result = new Dictionary<string, IEnumerable<string>>();
                 foreach (string row in rows)
                 {

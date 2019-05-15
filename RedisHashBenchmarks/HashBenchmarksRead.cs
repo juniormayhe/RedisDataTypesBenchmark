@@ -6,7 +6,7 @@
     using Infrastructure.CrossCutting.Cache;
 
     using RedisShared;
-
+    using System;
     using System.Collections.Generic;
 
     [RankColumn]
@@ -24,7 +24,7 @@
             this.Cache = CacheHelper.GetCacheStore();
 
             // warmup cache for further reading
-            this.ListForReading = Seed.BuildReasons(totalKeys: 5000, totalReasons: 2, totalRemovedEntities: 4);
+            this.ListForReading = Seed.BuildReasons(totalKeys: 1, totalReasons: 2, totalRemovedEntities: 4);
             this.WarmUpCacheForReadingWithRequestIdAsKey();
             this.WarmUpCacheForReadingWithAllFieldsAsKey();
             this.WarmUpCacheForReadingWithRequestIdAndProductIdAsKey();
@@ -131,7 +131,7 @@
                     entriesForHash.Add(productVariantReasonKey, entityIds);
                 }
 
-                this.Cache.HashSet(key, entriesForHash);
+                this.Cache.HashSet(key, entriesForHash, TimeSpan.FromSeconds(60));
             }
         }
 
@@ -151,7 +151,7 @@
                     entriesForHash.Add(productVariantReasonKey, entityIds);
                 }
 
-                this.Cache.HashSet(key, entriesForHash);
+                this.Cache.HashSet(key, entriesForHash, TimeSpan.FromSeconds(60));
             }
         }
 
@@ -171,7 +171,7 @@
                     entriesForHash.Add(reasonCode, entityIds);
                 }
 
-                this.Cache.HashSet(key, entriesForHash);
+                this.Cache.HashSet(key, entriesForHash, TimeSpan.FromSeconds(60));
             }
         }
 

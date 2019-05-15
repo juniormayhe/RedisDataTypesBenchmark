@@ -47,7 +47,7 @@
             {
                 string key = $"o4_set:RequestId_{item.RequestId}";
 
-                IEnumerable<string> values = Cache.SetGet(key);
+                IEnumerable<string> values = Cache.SetGetAll(key);
 
                 List<string> items = new List<string>();
                 foreach (string value in values)
@@ -78,7 +78,7 @@
             {
                 string key = $"o4_set:RequestId_{item.RequestId}:ProductId_{item.ProductId}";
 
-                IEnumerable<string> values = this.Cache.SetGet(key);
+                IEnumerable<string> values = this.Cache.SetGetAll(key);
 
                 List<string> items = new List<string>();
                 foreach (string value in values)
@@ -109,7 +109,7 @@
             {
                 string key = $"o4_set:{item.GetFullKey()}";
 
-                IEnumerable<string> values = this.Cache.SetGet(key);
+                IEnumerable<string> values = this.Cache.SetGetAll(key);
 
                 List<string> items = new List<string>();
                 foreach (string value in values)
