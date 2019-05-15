@@ -1,11 +1,13 @@
 ﻿namespace RedisHashBenchmarks
 {
     using BenchmarkDotNet.Running;
+
     using Infrastructure.CrossCutting.Cache;
+
     using RedisShared;
+
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     class Program
     {
@@ -14,12 +16,12 @@
             //quickTest();
 
             Console.WriteLine("Starting application");
-
-            var writeSummary = BenchmarkRunner.Run<HashBenchmarksWrite>();
+            
+            //var writeSummary = BenchmarkRunner.Run<HashBenchmarksWrite>();
             var readSummary = BenchmarkRunner.Run<HashBenchmarksRead>();
 
             // clean up data
-            // CacheHelper.GetCacheStore().Truncate(new []{ "o3_*"});
+            CacheHelper.GetCacheStore().Truncate(new []{ "o3_*"});
 
             Console.WriteLine("The end");
 
