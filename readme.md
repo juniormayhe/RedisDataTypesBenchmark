@@ -107,6 +107,21 @@ Where Entities are semi colon delimited string
 | O2_ReadHash_RequestIdAndProductIdInKey | 4.263 s | 0.0827 s | 0.1312 s |    1 | 2000.0000 | 1000.0000 |     - |   9.59 MB |
 ```
 
+### 5000 records with remote REDIS (with network latency)
+```
+|                               Method |     Mean |    Error |   StdDev | Rank |     Gen 0 |     Gen 1 | Gen 2 | Allocated |
+|------------------------------------- |---------:|---------:|---------:|-----:|----------:|----------:|------:|----------:|
+| O2_SetHash_RequestIdAndProductdInKey | 215.5 ms | 21.47 ms | 62.63 ms |    1 | 3666.6667 | 1000.0000 |     - |  14.85 MB |
+|            O1_SetHash_RequestIdInKey | 242.3 ms | 26.73 ms | 77.14 ms |    2 | 3000.0000 | 1000.0000 |     - |  16.94 MB |
+|            O3_SetHash_AllFieldsInKey | 254.3 ms | 26.28 ms | 75.41 ms |    2 | 2333.3333 |  333.3333 |     - |  14.01 MB |
+
+|                                 Method |    Mean |    Error |   StdDev | Rank |     Gen 0 |     Gen 1 | Gen 2 | Allocated |
+|--------------------------------------- |--------:|---------:|---------:|-----:|----------:|----------:|------:|----------:|
+|             O3_ReadHash_AllFieldsInKey | 218.6 s | 0.5787 s | 0.5413 s |    1 | 3000.0000 | 1000.0000 |     - |  10.21 MB |
+| O2_ReadHash_RequestIdAndProductIdInKey | 218.9 s | 0.3376 s | 0.3158 s |    1 | 2000.0000 | 1000.0000 |     - |   9.59 MB |
+|             O1_ReadHash_RequestIdInKey | 220.9 s | 1.1879 s | 1.0531 s |    1 | 3000.0000 | 1000.0000 |     - |  10.12 MB |
+```
+
 ## Narrowing observation of using hashes
 
 Evaluated Set value arrangements:
@@ -151,21 +166,6 @@ where both Reason is a string and Entities is a semi colon delimited string
 |             O1_ReadSet_RequestIdInKey | 4.199 s | 0.0759 s | 0.1309 s |    1 | 3000.0000 | 1000.0000 |     - |  18.43 MB |
 | O2_ReadSet_RequestIdAndProductIdInKey | 4.246 s | 0.0846 s | 0.0869 s |    1 | 3000.0000 | 1000.0000 |     - |  17.62 MB |
 |             O3_ReadSet_AllFieldsInKey | 4.256 s | 0.0838 s | 0.0897 s |    1 | 3000.0000 | 1000.0000 |     - |  15.81 MB |
-```
-
-### 5000 records with remote REDIS (with network latency)
-```
-|                               Method |     Mean |    Error |   StdDev | Rank |     Gen 0 |     Gen 1 | Gen 2 | Allocated |
-|------------------------------------- |---------:|---------:|---------:|-----:|----------:|----------:|------:|----------:|
-| O2_SetHash_RequestIdAndProductdInKey | 215.5 ms | 21.47 ms | 62.63 ms |    1 | 3666.6667 | 1000.0000 |     - |  14.85 MB |
-|            O1_SetHash_RequestIdInKey | 242.3 ms | 26.73 ms | 77.14 ms |    2 | 3000.0000 | 1000.0000 |     - |  16.94 MB |
-|            O3_SetHash_AllFieldsInKey | 254.3 ms | 26.28 ms | 75.41 ms |    2 | 2333.3333 |  333.3333 |     - |  14.01 MB |
-
-|                                 Method |    Mean |    Error |   StdDev | Rank |     Gen 0 |     Gen 1 | Gen 2 | Allocated |
-|--------------------------------------- |--------:|---------:|---------:|-----:|----------:|----------:|------:|----------:|
-|             O3_ReadHash_AllFieldsInKey | 218.6 s | 0.5787 s | 0.5413 s |    1 | 3000.0000 | 1000.0000 |     - |  10.21 MB |
-| O2_ReadHash_RequestIdAndProductIdInKey | 218.9 s | 0.3376 s | 0.3158 s |    1 | 2000.0000 | 1000.0000 |     - |   9.59 MB |
-|             O1_ReadHash_RequestIdInKey | 220.9 s | 1.1879 s | 1.0531 s |    1 | 3000.0000 | 1000.0000 |     - |  10.12 MB |
 ```
 
 ## Conclusions
