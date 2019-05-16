@@ -24,7 +24,7 @@
             this.Cache = CacheHelper.GetCacheStore();
 
             // warmup cache for further reading
-            this.ListForReading = Seed.BuildReasons(totalKeys: 1, totalReasons: 2, totalRemovedEntities: 4);
+            this.ListForReading = Seed.BuildReasons(totalKeys: 5000, totalReasons: 2, totalRemovedEntities: 4);
             this.WarmUpCacheForReadingWithRequestIdAsKey();
             this.WarmUpCacheForReadingWithAllFieldsAsKey();
             this.WarmUpCacheForReadingWithRequestIdAndProductIdAsKey();

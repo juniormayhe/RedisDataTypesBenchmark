@@ -15,11 +15,11 @@
 
             Console.WriteLine("Starting application");
 
-            //var writeSummary = BenchmarkRunner.Run<SetBenchmarksWrite>();
+            var writeSummary = BenchmarkRunner.Run<SetBenchmarksWrite>();
             var readSummary = BenchmarkRunner.Run<SetBenchmarksRead>();
 
             // clean up data
-            // CacheHelper.GetCacheStore().Truncate(new []{ "o3_*"});
+            CacheHelper.GetCacheStore().Truncate(new []{ "o4_*"});
 
             Console.WriteLine("The end");
 
