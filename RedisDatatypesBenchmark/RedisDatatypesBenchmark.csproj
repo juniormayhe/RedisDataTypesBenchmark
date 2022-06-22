@@ -11,7 +11,7 @@
     <PackageReference Include="BenchmarkDotNet" Version="0.11.5" />
     <PackageReference Include="Jil" Version="2.17.0" />
     <PackageReference Include="NetJSON" Version="1.2.10.2" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
